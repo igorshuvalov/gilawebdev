@@ -352,7 +352,7 @@ function date_popup_process_date_part(&$element) {
   $parents = array_merge($element['#parents'], array('date'));
   $sub_element = array(
     '#type' => 'textfield',
-    '#title' => $element['#date_label_position'] == 'above' ? theme('date_part_label_date', array('part_type' => 'date', 'element' => $element)) : '',
+    //'#title' => $element['#date_label_position'] == 'above' ? theme('date_part_label_date', array('part_type' => 'date', 'element' => $element)) : '',
     '#default_value' => $element['#value']['date'],
     '#id' => $id,
     '#input' => FALSE,
@@ -365,7 +365,7 @@ function date_popup_process_date_part(&$element) {
   );
   $sub_element['#value'] = $sub_element['#default_value'];
   // TODO, figure out exactly when we want this description. In many places it is not desired.
-  $sub_element['#description'] = ' ';//. t('E.g., @date', array('@date' => date_format_date(date_example_date(), 'custom', date_popup_date_format($element))));
+  $sub_element['#description'] = $element['#subdescription'];//. t('E.g., @date', array('@date' => date_format_date(date_example_date(), 'custom', date_popup_date_format($element))));
 
   return $sub_element;
 }
@@ -666,7 +666,7 @@ function theme_date_popup($vars) {
   $attributes = !empty($element['#wrapper_attributes']) ? $element['#wrapper_attributes'] : array('class' => array());
   $attributes['class'][] = 'container-inline-date';
   // If there is no description, the floating date elements need some extra padding below them.
-  $wrapper_attributes = array('class' => array('date-padding'));
+  $wrapper_attributes = array('class' => array(''));
   if (empty($element['date']['#description'])) {
     $wrapper_attributes['class'][] = 'clearfix';
   }

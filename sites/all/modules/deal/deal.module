@@ -475,6 +475,8 @@ function deal_node_view($node, $view_mode) {
  */
 function deal_info_form($form, &$form_state, $deal = NULL) {
   
+  drupal_add_css(drupal_get_path('module', 'deal') . '/deal.css', 'external');
+  
   $form_state['cache'] = TRUE;
   
   if ($deal) {
@@ -559,7 +561,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
   $form['date_start'] = array(
     '#type'             => 'date_popup',
     '#title'            => t('Deal Start Date'),
-    '#description'      => t('If the Deal starts on a specific date, please specify the Start Date. Format is YYYY-MM-DD.'),
+    '#subdescription'   => t('If the Deal starts on a specific date, please specify the Start Date. Format is YYYY-MM-DD.'),
     '#date_format'      => 'Y-m-d',
     '#date_text_parts'  => array('year'),
     '#date_increment'   => 30,
@@ -570,7 +572,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
   $form['date_expiry'] = array(
     '#type'             => 'date_popup',
     '#title'            => t('Deal Expiry Date'),
-    '#description'      => t('If the Deal ends on a specific date, please specify the End Date. If you have entered a Start Date, the End Date must be after the Start Date. Format is YYYY-MM-DD.'),
+    '#subdescription'   => t('If the Deal ends on a specific date, please specify the End Date. If you have entered a Start Date, the End Date must be after the Start Date. Format is YYYY-MM-DD.'),
     '#date_format'      => 'Y-m-d',
     '#date_text_parts'  => array('year'),
     '#date_increment'   => 30,
