@@ -295,7 +295,9 @@ function deal_items_by_category_filter($deal_category, $filter, $key = NULL) {
         ->fields('u')
         ->limit(10)
         ->orderBy('date_posted', 'DESC')
-        ->setCountQuery($count_query);    
+        ->setCountQuery($count_query);
+        
+      $filter_options = NULL;
       break;
     case 'popular':
       $subtitle = t('Popular Deals');
@@ -373,7 +375,7 @@ function deal_items_by_category_filter($deal_category, $filter, $key = NULL) {
   
   $deals = $query->execute()->fetchAllAssoc('did', PDO::FETCH_OBJ);
   
-  drupal_set_title(t('Deals for ' . $category_name) . ':' . $subtitle);
+  drupal_set_title(t($subtitle . ' for ' . $category_name));
       
   return theme(
     'deal_list', 
@@ -524,7 +526,9 @@ function deal_items_by_location_filter($deal_location, $filter, $key = NULL) {
         ->fields('u')
         ->limit(10)
         ->orderBy('date_posted', 'DESC')
-        ->setCountQuery($count_query);    
+        ->setCountQuery($count_query);
+        
+      $filter_options = NULL;
       break;
     case 'popular':
       $subtitle = t('Popular Deals');
@@ -602,7 +606,7 @@ function deal_items_by_location_filter($deal_location, $filter, $key = NULL) {
   
   $deals = $query->execute()->fetchAllAssoc('did', PDO::FETCH_OBJ);
   
-  drupal_set_title(t('Deals for ' . $location_name . ':' . $subtitle));
+  drupal_set_title(t($subtitle . ' for ' . $location_name));
   
   return theme(
     'deal_list', 
