@@ -148,8 +148,8 @@ function deal_menu() {
     'weight'            => -18,
   );
   
-  $items['deal/new/list/noexpired'] = array(
-    'title'             => 'Hide Expired Deals',
+  $items['deal/new/list/active'] = array(
+    'title'             => 'New Deals - Active Only',
     'description'       => 'No expired deals that have been submitted most recently.',
     'page callback'     => 'deal_new_items_noexpired',
     'access arguments'  => array('public'),
@@ -168,8 +168,8 @@ function deal_menu() {
     'weight'            => -16,
   );
   
-  $items['deal/popular/list/noexpired'] = array(
-    'title'             => 'Hide Expired Deals',
+  $items['deal/popular/list/active'] = array(
+    'title'             => 'Popular Deals - Active Only',
     'description'       => 'No expired deals the most votes in the past 3 days.',
     'page callback'     => 'deal_popular_items_noexpired',
     'access arguments'  => array('public'),
@@ -234,8 +234,8 @@ function deal_menu() {
     'file'              => 'deal.pages.inc',
   );
   
-  $items['deal/category/%/%/noexpired'] = array(
-    'title'             => 'Hide Expired Deals',
+  $items['deal/category/%/%/active'] = array(
+    'title'             => 'Deals by a category for deals filtering - Active Only',
     'description'       => 'No expired deals by a category for deals filtering.',
     'page callback'     => 'deal_items_by_category_filter_noexpired',
     'page arguments'    => array(2, 3),
@@ -279,8 +279,8 @@ function deal_menu() {
     'file'              => 'deal.pages.inc',
   );
   
-  $items['deal/location/%/%/noexpired'] = array(
-    'title'             => 'Hide Expired Deals',
+  $items['deal/location/%/%/active'] = array(
+    'title'             => 'Deals by Location for deals filtering - Active Only',
     'description'       => 'No expired deals by Schedule for deals filtering.',
     'page callback'     => 'deal_items_by_location_filter_noexpired',
     'page arguments'    => array(2, 3),
@@ -312,8 +312,8 @@ function deal_menu() {
     'file'              => 'deal.pages.inc',
   );
   
-  $items['deal/tag/%/noexpired'] = array(
-    'title'             => 'Hide Expired Deals',
+  $items['deal/tag/%/active'] = array(
+    'title'             => 'Deals by tag - Active Only',
     'description'       => 'No expired deals by specified tag.',
     'page callback'     => 'deal_items_by_tag_noexpired',
     'page arguments'    => array(2),

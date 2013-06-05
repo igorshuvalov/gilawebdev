@@ -15,9 +15,9 @@ function deal_new_items($key = NULL) {
       $filter_options = NULL;
       break;
     default:
-      $filter_options = array(
-        t('Hide Expired Deals') => 'deal/new/list/noexpired',
-      );
+      $filter_options = NULL;/*array(
+        t('Hide Expired Deals') => 'deal/new/list/active',
+      );*/
       break;
   }
     
@@ -73,7 +73,7 @@ function deal_popular_items($key = NULL) {
       break;
     default:
       $filter_options = array(
-        t('Hide Expired Deals') => 'deal/popular/list/noexpired',
+        t('Hide Expired Deals') => 'deal/popular/list/active',
       );
       break;
   }
@@ -275,7 +275,7 @@ function deal_items_by_category_filter($deal_category, $filter, $key = NULL) {
       break;
     default:
       $filter_options = array(
-        t('Hide Expired Deals') => 'deal/category/' . $deal_category . '/' . $filter . '/noexpired',
+        t('Hide Expired Deals') => 'deal/category/' . $deal_category . '/' . $filter . '/active',
       );
       break;
   }
@@ -504,7 +504,7 @@ function deal_items_by_location_filter($deal_location, $filter, $key = NULL) {
       break;
     default:
       $filter_options = array(
-        t('Hide Expired Deals') => 'deal/location/' . $deal_location . '/' . $filter . '/noexpired',
+        t('Hide Expired Deals') => 'deal/location/' . $deal_location . '/' . $filter . '/active',
       );
       break;
   }
@@ -681,7 +681,7 @@ function deal_items_by_tag($deal_tag, $key = NULL) {
       break;
     default:
       $filter_options = array(
-        t('Hide Expired Deals') => 'deal/tag/' . $deal_tag . '/noexpired',
+        t('Hide Expired Deals') => 'deal/tag/' . $deal_tag . '/active',
       );
       break;
   }
