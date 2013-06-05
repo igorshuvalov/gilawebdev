@@ -430,6 +430,7 @@ function deal_node_form($form, &$form_state, $node) {
     $form = deal_info_form($form, &$form_state, $node->deal);
   }
   else {
+    drupal_set_title(t('Submit Deal'));
     $form = deal_info_form($form, &$form_state);
   }
   
