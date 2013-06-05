@@ -1,0 +1,200 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the deal module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function deal_uninstall() {
+
+  $query = db_select('{deal}', 'd');
+  $query->fields('d');
+  $deals = $query->execute();
+  foreach ($deals as $deal) {
+    // Remove node items
+    node_delete($deal->dnid);
+
+    // Remove URL alias items
+    db_delete('{url_alias}')
+      ->condition('pid', $deal->url_pid)
+      ->execute();
+
+    // Remove photo images
+    db_delete('{file_managed}')
+      ->condition('fid', $deal->photo)
+      ->execute();
+  }
+
+}
+
+/**
+ * Implements hook_schema().
+ */
+function deal_schema() {
+  
+  $schema['deal'] = array(
+    'description' => 'Stores deal information.',
+    'fields' => array(
+      'did' => array(
+        'type'          => 'serial',
+        'unsigned'      => TRUE,
+        'not null'      => TRUE,
+        'description'   => "Deal Index",
+      ),
+      'dnid' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => "Foreign key: {node}.nid of Node",
+      ),
+      'duid' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => "Foreign key: {users}.uid of Deal User",
+      ),
+      'title' => array(
+        'type'          => 'varchar',
+        'length'        => 100,
+        'not null'      => TRUE,
+        'description'   => "Deal Title",
+        'translatable'  => TRUE,
+      ),
+      'url_pid' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => "Foreign key: {url_alias}.pid of Deal URL",
+      ),
+      'deal_url' => array(
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'description'   => "Deal URL",
+      ),
+      'coupon_code' => array(
+        'type'          => 'varchar',
+        'length'        => 30,
+        'not null'      => TRUE,
+        'description'   => "Coupon Code",
+        'translatable'  => FALSE,
+      ),
+      'representative' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Store Representative Checkbox',
+      ),
+      'date_start' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Start Date',
+      ),
+      'date_expiry' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Expiry Date',
+      ),
+      'category' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Category',
+      ),
+      'location' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Location',
+      ),
+      'photo' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => "Foreign key: {file_managed}.fid of Deal Photo",
+      ),
+      'tags' => array(
+        'type'          => 'varchar',
+        'length'        => 100,
+        'not null'      => TRUE,
+        'description'   => "Deal Tags",
+        'translatable'  => TRUE,
+      ),
+      'description' => array(
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'description'   => "Deal Description",
+        'translatable'  => TRUE,
+      ),
+      'date_posted' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Posted Date',
+      ),
+      'disabled' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Status',
+      )
+    ),
+    'primary key' => array('did'),
+  );
+  
+  $schema['deal_rate'] = array(
+    'description' => 'Stores deal rate information.',
+    'fields' => array(
+      'drid' => array(
+        'type'          => 'serial',
+        'unsigned'      => TRUE,
+        'not null'      => TRUE,
+        'description'   => "Deal Rate Index",
+      ),
+      'droid' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Foreign key: {deal}.did of Deal',
+      ),
+      'druid' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Foreign key: {users}.uid of User',
+      ),
+      'rate_for' => array(
+        'type'          => 'varchar',
+        'length'        => 20,
+        'not null'      => TRUE,
+        'description'   => "For rate type: deal - voted for deal",
+      ),
+      'rate' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Rate',
+      ),
+      'date_posted' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Rate Posted Date',
+      ),
+      'status' => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'default'       => 0,
+        'description'   => 'Deal Rate Status. voted:1 and cancelled:-1 ',
+      ),
+    ),
+    'primary key' => array('drid'),
+  );
+  
+  return $schema;
+  
+}

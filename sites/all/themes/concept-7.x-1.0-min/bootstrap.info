@@ -1,0 +1,142 @@
+name = Concept custom
+description = Spend less time thinking your Web Design. You and your clients will love what Concept can do. Nothing like experiencing the real thing and deciding for yourself. Try it now and you will see that Concept is the best for your Business.
+version = 1.0-6c21775
+core = 7.x
+regions[navigation]     = 'Navigation'
+
+regions[header]         = 'Header'
+regions[info]           = 'Info'
+regions[headerbottom]   = 'Header Bottom'
+
+regions[intro]		= 'Intro Block'
+regions[highlighted]    = 'Highlighted'
+regions[help]           = 'Help'
+regions[raw_top]        = 'Raw Top'
+regions[raw]            = 'Raw'
+regions[content]        = 'Content'
+regions[sidebar_first]  = 'Primary'
+regions[sidebar_second] = 'Secondary'
+regions[footer_top]     = 'Footer Top'
+regions[footer]         = 'Footer'
+regions[footer_bottom]  = 'Footer Bottom'
+
+;# Build mode
+;#-----------------------------------------------------------------------------
+
+;# Stylesheets
+;stylesheets[all][] = assets/css/concept.min.css
+;stylesheets[all][] = assets/css/responsive.min.css
+
+;# Scripts
+;scripts[] = assets/js/script.min.js
+;scripts[] = assets/js/vendor.min.js
+
+
+;# Dev mode
+;#-----------------------------------------------------------------------------
+
+;# Stylesheets
+stylesheets[all][] = assets/css/concept.css
+;stylesheets[all][] = assets/css/responsive.css
+
+;# Scripts
+scripts[] = assets/js/script.js
+
+; Modernizr
+scripts[] = assets/js/vendor/modernizr.min.js
+
+scripts[] = assets/js/vendor.js
+
+; Vendor
+;scripts[] = assets/js/vendor/jquery.waitforimages.min.js
+;scripts[] = assets/js/vendor/hoverIntent.min.js
+;scripts[] = assets/js/vendor/bootstraphover.min.js
+;scripts[] = assets/js/vendor/flexslider.min.js
+;scripts[] = assets/js/vendor/jquery.carouFredSel-6.2.0.min.js
+;scripts[] = assets/js/vendor/jquery.easing.1.3.js
+;scripts[] = assets/js/vendor/jquery.touchSwipe.min.js
+;scripts[] = assets/js/vendor/jquery.mousewheel.min.js
+;scripts[] = assets/js/vendor/jquery.ba-throttle-debounce.min.js
+;scripts[] = assets/js/vendor/jquery.transit.min.js
+;scripts[] = assets/js/vendor/jquery.inview.min.js
+;scripts[] = assets/js/vendor/jquery.backstretch.min.js
+;scripts[] = assets/js/vendor/jquery.tinynav.min.js
+;scripts[] = assets/js/vendor/retina.min.js
+
+;@TODO
+;scripts[] = assets/js/vendor/jquery.revslider.plugins.min.js
+;scripts[] = assets/js/vendor/jquery.revslider.revolution.min.js
+
+settings[toggle_name]   = 0
+settings[toggle_search] = 1
+;settings[cdn_bootstrap] = 0
+;settings[cdn_jquery]    = 0
+
+settings[breadcrumb]    = 1
+
+settings[welcome_tab]   = 1
+
+; iOS touch icon
+settings[toggle_touch_icon_plain] = 1
+settings[toggle_touch_icon_precomp] = 1
+settings[default_touch_icon_plain] = 1
+settings[default_touch_icon_precomp] = 1
+
+;Layout
+settings[layout_mode] = "responsive"
+;settings[layout_style] = "fixed"
+settings[layout_type] = "wide"
+settings[layout_top_margin] = 0
+
+settings[brand_span] = 4
+settings[mainmenu_span] = 8
+
+;Polyfills
+settings[html_polyfill]            = 1
+settings[boxsizing_polyfill]       = 0
+settings[flexible_images_polyfill] = 1
+
+settings[responsive_polyfill]      = 1
+settings[responsive_polyfill2]     = 0
+
+;Exclude
+;javascript
+;exclude[js][] = 'modules/contextual/contextual.js'
+;exclude[js][] = 'misc/jquery.js'
+
+;css
+;exclude[css][] = 'misc/vertical-tabs.css'
+exclude[css][] = 'modules/aggregator/aggregator.css'
+exclude[css][] = 'modules/block/block.css'
+exclude[css][] = 'modules/book/book.css'
+exclude[css][] = 'modules/comment/comment.css'
+exclude[css][] = 'modules/dblog/dblog.css'
+exclude[css][] = 'modules/file/file.css'
+exclude[css][] = 'modules/filter/filter.css'
+exclude[css][] = 'modules/forum/forum.css'
+exclude[css][] = 'modules/help/help.css'
+exclude[css][] = 'modules/menu/menu.css'
+exclude[css][] = 'modules/node/node.css'
+exclude[css][] = 'modules/openid/openid.css'
+exclude[css][] = 'modules/poll/poll.css'
+exclude[css][] = 'modules/search/search.css'
+exclude[css][] = 'modules/statistics/statistics.css'
+exclude[css][] = 'modules/syslog/syslog.css'
+;exclude[css][] = 'modules/system/admin.css'
+exclude[css][] = 'modules/system/maintenance.css'
+;exclude[css][] = 'modules/system/system.css'
+;exclude[css][] = 'modules/system/system.admin.css'
+;exclude[css][] = 'modules/system/system.base.css'
+exclude[css][] = 'modules/system/system.maintenance.css'
+exclude[css][] = 'modules/system/system.menus.css'
+exclude[css][] = 'modules/system/system.messages.css'
+exclude[css][] = 'modules/system/system.theme.css'
+exclude[css][] = 'modules/taxonomy/taxonomy.css'
+exclude[css][] = 'modules/tracker/tracker.css'
+exclude[css][] = 'modules/update/update.css'
+exclude[css][] = 'modules/user/user.css'
+
+; Information added by drupal.org packaging script on 2012-12-11
+version = "7.x-1.0-rc2"
+core = "7.x"
+

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Haiku Custom Content feature.
+ */
+
+include_once 'haiku_custom_content.features.inc';

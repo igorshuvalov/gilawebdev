@@ -1,0 +1,4 @@
+name = Gilaweb tweaks
+description = Cutomizations for Gilaweb.
+package = Gilaweb
+core = 7.x

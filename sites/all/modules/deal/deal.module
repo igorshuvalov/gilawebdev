@@ -1,0 +1,1233 @@
+<?php
+
+/**
+ * @file
+ * Deal management
+ */
+ 
+/**
+ * Implements hook_help().
+ */
+function deal_help($path, $arg) {
+  
+  switch ($path) {
+    case 'admin/help#deal':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Creating a deal') . '</dt>';
+      $output .= '<dd>' . t('') . '</dd>';
+      $output .= '<dt>' . t('Viewing deal') . '</dt>';
+      $output .= '<dd>' . t('') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+  
+}
+
+/**
+ * Implements hook_theme().
+ */
+function deal_theme() {
+  
+  return array(
+    'deal_list' => array(
+      'template' => 'deal-list',
+      'variables' => array(
+        'list' => NULL,
+        'filter_options' => NULL,
+      ),
+    ),
+    'deal_teaser' => array(
+      'template' => 'deal-item',
+      'variables' => array(
+        'item' => NULL,
+      ),
+    ),
+    'deal_view_content' => array(
+      'template' => 'deal-view-content',
+      'variables' => array(
+        'item' => NULL,
+      ),
+    ),
+    'deal_category_list' => array(
+      'template' => 'deal-category-list',
+      'variables' => array(
+        'list' => NULL,
+      ),
+    ),
+    'deal_location_list' => array(
+      'template' => 'deal-location-list',
+      'variables' => array(
+        'list' => NULL,
+      ),
+    ),
+    'deal_tag_list' => array(
+      'template' => 'deal-tag-list',
+      'variables' => array(
+        'list' => NULL,
+      ),
+    ),
+  );
+  
+}
+
+/**
+* Implements hook_init().
+*/
+function deal_init() {
+  
+  global $user;
+  
+  drupal_add_js('
+    jQuery(document).ready(function() {
+      jQuery.extend({
+          handleError: function( s, xhr, status, e ) {
+              // If a local callback was specified, fire it
+              if ( s.error )
+                  s.error( xhr, status, e );
+              // If we have some XML response text (e.g. from an AJAX call) then log it in the console
+              else if(xhr.responseText)
+                  console.log(xhr.responseText);
+          }
+      });
+    });    
+  ', 'inline');
+
+}
+
+/**
+ * Implements hook_menu().
+ */
+function deal_menu() {
+  
+  // Administration deal pages.
+  $items['admin/deal'] = array(
+    'title'             => 'Deal Management',
+    'description'       => 'Manage deal items.',
+    'page callback'     => 'deal_list_form',
+    'access arguments'  => array('administrator'),
+    'access callback'   => array('custom_deal_access'),
+    'position'          => 'left',
+    'weight'            => 10,
+    'file'              => 'deal.admin.inc',
+  );
+  
+  // Deal items list page
+  $items['admin/deal/list'] = array(
+    'title'             => 'Deal List',
+    'description'       => 'Deal items list',
+    'access arguments'  => array('administrator'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+    'weight'            => -20,
+    'file'              => 'deal.admin.inc',
+  );
+  
+  // Deal votes detail view popup
+  $items['admin/deal/%/votes/%'] = array(
+    'title'             => 'Deal Votes Information',
+    'description'       => 'Deal Votes detail view page.',
+    'page callback'     => 'deal_votes_view_popup',
+    'page arguments'    => array(2, 4),
+    'access arguments'  => array('administrator'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.admin.inc',
+  );
+  
+  // Recent deals list page
+  $items['deal/new/list'] = array(
+    'title'             => 'New Deals',
+    'description'       => 'Deals that have been submitted most recently.',
+    'page callback'     => 'deal_new_items',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+    'weight'            => -18,
+  );
+  
+  $items['deal/new/list/noexpired'] = array(
+    'title'             => 'Hide Expired Deals',
+    'description'       => 'No expired deals that have been submitted most recently.',
+    'page callback'     => 'deal_new_items_noexpired',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Popular deals list page
+  $items['deal/popular/list'] = array(
+    'title'             => 'Popular Deals',
+    'description'       => 'Deals with the most votes in the past 3 days.',
+    'page callback'     => 'deal_popular_items',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+    'weight'            => -16,
+  );
+  
+  $items['deal/popular/list/noexpired'] = array(
+    'title'             => 'Hide Expired Deals',
+    'description'       => 'No expired deals the most votes in the past 3 days.',
+    'page callback'     => 'deal_popular_items_noexpired',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Expiring soon deals list page
+  $items['deal/expiring/list'] = array(
+    'title'             => 'Deals Expiring Soon',
+    'description'       => 'Deals with a "Deal Expiry Date/Time" that are expiring in the next 3 days.',
+    'page callback'     => 'deal_expiring_soon_items',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+    'weight'            => -14,
+  );
+  
+  // Starting soon deals list page
+  $items['deal/starting/list'] = array(
+    'title'             => 'Deals Starting Soon',
+    'description'       => 'Deals with a "Deal Start Date/Time" that are starting in the next 3 days.',
+    'page callback'     => 'deal_starting_soon_items',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+    'weight'            => -12,
+  );
+  
+  // Deals category page
+  $items['deal/category/view'] = array(
+    'title'             => 'Deal Categories',
+    'description'       => 'List of Deal Categories.',
+    'page callback'     => 'deal_category_view',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+    'weight'            => -10,
+  );
+  
+  // Deal list for specified category
+  $items['deal/category/%'] = array(
+    'title'             => 'Deals by Category',
+    'description'       => 'List Deals by Schedule A - Deal Categories.',
+    'page callback'     => 'deal_items_by_category',
+    'page arguments'    => array(2),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Deal list for specified category by deals filtering
+  $items['deal/category/%/%'] = array(
+    'title'             => 'Deals by a category for deals filtering',
+    'description'       => 'List Deals by a category for deals filtering.',
+    'page callback'     => 'deal_items_by_category_filter',
+    'page arguments'    => array(2, 3),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  $items['deal/category/%/%/noexpired'] = array(
+    'title'             => 'Hide Expired Deals',
+    'description'       => 'No expired deals by a category for deals filtering.',
+    'page callback'     => 'deal_items_by_category_filter_noexpired',
+    'page arguments'    => array(2, 3),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Deals location page
+  $items['deal/location/view'] = array(
+    'title'             => 'Deal Locations',
+    'description'       => 'List of Deal Locations.',
+    'page callback'     => 'deal_location_view',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+    'weight'            => -8,
+  );
+  
+  // Deal list for specified location
+  $items['deal/location/%'] = array(
+    'title'             => 'Deals by Location',
+    'description'       => 'List Deals by Schedule B - Deal Locations.',
+    'page callback'     => 'deal_items_by_location',
+    'page arguments'    => array(2),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Deal list for specified location by deals filtering
+  $items['deal/location/%/%'] = array(
+    'title'             => 'Deals by Location for deals filtering',
+    'description'       => 'List Deals by Schedule for deals filtering.',
+    'page callback'     => 'deal_items_by_location_filter',
+    'page arguments'    => array(2, 3),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  $items['deal/location/%/%/noexpired'] = array(
+    'title'             => 'Hide Expired Deals',
+    'description'       => 'No expired deals by Schedule for deals filtering.',
+    'page callback'     => 'deal_items_by_location_filter_noexpired',
+    'page arguments'    => array(2, 3),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Deal tags page
+  $items['deal/tag'] = array(
+    'title'             => 'Deal tags',
+    'description'       => 'List Deal tags',
+    'page callback'     => 'deal_tag_view',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Deal list page for specified tag
+  $items['deal/tag/%'] = array(
+    'title'             => 'Deals by tag',
+    'description'       => 'List Deals by specified tag.',
+    'page callback'     => 'deal_items_by_tag',
+    'page arguments'    => array(2),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  $items['deal/tag/%/noexpired'] = array(
+    'title'             => 'Hide Expired Deals',
+    'description'       => 'No expired deals by specified tag.',
+    'page callback'     => 'deal_items_by_tag_noexpired',
+    'page arguments'    => array(2),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
+    
+  // Deal votes detail view page
+  $items['deal/%/votes/%'] = array(
+    'title'             => 'Deal Votes Information',
+    'description'       => 'Deal Votes detail view page.',
+    'page callback'     => 'deal_votes_view',
+    'page arguments'    => array(1, 3),
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Deal vote action
+  $items['deal/vote'] = array(
+    'title'             => 'Deal Vote Action',
+    'description'       => 'Deal vote action.',
+    'page callback'     => 'deal_vote_action',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Deal vote cancel action
+  $items['deal/vote/cancel'] = array(
+    'title'             => 'Deal Vote Cancel Action',
+    'description'       => 'Deal vote cancel action.',
+    'page callback'     => 'deal_vote_cancel_action',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'type'              => MENU_LOCAL_ACTION,
+    'file'              => 'deal.pages.inc',
+  );
+    
+  return $items;
+  
+}
+
+/**
+ * Implements hook_node_info().
+ */
+function deal_node_info() {
+  
+  return array(
+    'deal' => array(
+      'name' => t('Deal'),
+      'base' => 'deal',
+      'description' => t('Deal Content Type.'),
+      'title_label' => t('Title'),
+    )
+  );
+  
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function deal_field_extra_fields() {
+  
+  $extra['node']['deal'] = array(
+    'display' => array(
+      'deal_list' => array(
+        'label' => t('Deal List'),
+        'description' => t('Deal list'),
+        'weight' => 0,
+      ),
+    )
+  );
+
+  return $extra;
+  
+}
+
+/**
+ * Implements hook_form().
+ */
+function deal_form($node, &$form_state) {
+  
+  global $user;
+  
+  $form_state['cache'] = TRUE;
+  
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#required' => TRUE,
+    '#default_value' => $node->title,
+    '#weight' => -5,
+  );
+  
+  return $form;
+  
+}
+
+/**
+* Build edit or create deal form on frontpage
+* 
+* @param mixed $form
+* @param mixed $form_state
+* @param $node
+*   Node object without deal information
+*/
+function deal_node_form($form, &$form_state, $node) {
+  
+  if (@$node->nid) {
+    $form = deal_info_form($form, &$form_state, $node->deal);
+  }
+  else {
+    $form = deal_info_form($form, &$form_state);
+  }
+  
+  $form['#node'] = $node;
+  
+  return $form;
+  
+}
+
+// Implements hook_node_view().
+function deal_node_view($node, $view_mode) {
+  
+  if ($deal = @$node->deal) {
+    if ($view_mode == 'teaser') {
+      drupal_add_js(drupal_get_path('module', 'deal') . '/js/deal-list.js');
+      $node->title = '';
+      $node->content = array(
+        'deal_item' => array(
+          '#markup' => theme('deal_teaser', array('item' => $deal)),
+        ),
+      );
+    }
+    else if ($view_mode == 'full') {
+      drupal_add_js(drupal_get_path('module', 'deal') . '/js/deal-view.js');
+      drupal_add_js(drupal_get_path('module', 'deal') . '/ZeroClipboard/ZeroClipboard.min.js');
+      //$node->title = '';
+      $node->content['deal_view_content'] = array(
+        '#markup' => theme('deal_view_content', array('item' => $deal)),
+        '#weight' => -1000,
+      );
+    }
+  }
+  
+  return $node;
+  
+}
+
+/**
+ * Form builder; the deal information form.
+ *
+ * @ingroup forms
+ */
+function deal_info_form($form, &$form_state, $deal = NULL) {
+  
+  $form_state['cache'] = TRUE;
+  
+  if ($deal) {
+    $form['did'] = array(
+      '#type'   => 'value',
+      '#value'  => $deal->did,
+    );
+  }
+  
+  $form['guideline'] = array(
+    '#type'   => 'markup',
+    '#markup' => '<p>Silahkan membaca panduan <strong><a href="' . url('guidelines') . '">posting dan tagging sebelum</a></strong></p>',
+  );
+  
+  $form['title'] = array(
+    '#type'           => 'textfield',
+    '#title'          => t('Deal Title'),
+    '#maxlength'      => 100,
+    '#description'    => t('Please enter a Deal Title (100 characters or less).'),
+    '#required'       => TRUE,
+    '#default_value'  => $deal ? $deal->title : '',
+  );
+  
+  $form['deal_url'] = array(
+    '#type'           => 'textfield',
+    '#title'          => t('Deal URL'),
+    '#maxlength'      => 255,
+    '#description'    => t('Please enter the Website (URL) to access the Deal.'),
+    '#required'       => TRUE,
+    '#default_value'  => $deal ? $deal->deal_url : '',
+  );
+  
+  $form['photo'] = array(
+    '#type'     => 'fieldset',
+    '#title'    => t('Deal Photo'),
+  );
+  $form['photo']['photo_automatic'] = array(
+    '#type'           => 'checkbox',
+    '#title'          => t('Option 1 - Make Automated Screenshot of Deal URL (Default)'),
+    '#default_value'  => (!$deal || ($deal && $deal->photo == 0) ? 1 : 0),
+  );
+  if ($deal && $deal->photo) {
+    $photo = file_load($deal->photo);
+    $form['photo']['image'] = array(
+      '#markup' => theme('image', array('path' => $photo->uri, 'alt' => $deal->title, 'title' => $deal->title, 'width' => '50'))
+    );
+  }
+  
+  $form['photo']['photo_upload'] = array(
+    '#type'         => 'file',
+    '#title'        => t('Option 2 - Upload Deal Photo'),
+    '#size'         => 48,
+    '#required'     => FALSE,
+    '#description'  => t('Upload an image (JPEG, PNG or GIF) under 500Kb.'),
+  );
+  
+  $form['coupon_code'] = array(
+    '#type'           => 'textfield',
+    '#title'          => t('Coupon Code'),
+    '#maxlength'      => 30,
+    '#description'    => t('If Coupon Code applies to the Deal, please enter the Coupon Code.'),
+    '#required'       => FALSE,
+    '#default_value'  => $deal ? $deal->coupon_code : '',
+  );
+  
+  $form['description'] = array(
+    '#type'           => 'textarea',
+    '#title'          => t('Deal Description'),
+    '#description'    => t('Please enter a short Deal Description.'),
+    '#required'       => TRUE,
+    '#default_value'  => $deal ? $deal->description : '',
+  );
+  
+  $form['representative'] = array(
+    '#type'           => 'checkbox', 
+    '#title'          => t('Store Representative'),
+    '#description'    => t('If you are a Store Representative, as defined in the Posting Guidelines, you must check this box.'),
+    '#required'       => FALSE,
+    '#default_value'  => $deal ? $deal->representative : 0,
+  );
+  
+  $form['date_start'] = array(
+    '#type'             => 'date_popup',
+    '#title'            => t('Deal Start Date'),
+    '#description'      => t('If the Deal starts on a specific date, please specify the Start Date. Format is YYYY-MM-DD.'),
+    '#date_format'      => 'Y-m-d',
+    '#date_text_parts'  => array('year'),
+    '#date_increment'   => 30,
+    '#date_year_range'  => '-1:+3',
+    '#default_value'    => ($deal && $deal->date_start) ? date('Y-m-d', $deal->date_start) : '',
+  );
+  
+  $form['date_expiry'] = array(
+    '#type'             => 'date_popup',
+    '#title'            => t('Deal Expiry Date'),
+    '#description'      => t('If the Deal ends on a specific date, please specify the End Date. If you have entered a Start Date, the End Date must be after the Start Date. Format is YYYY-MM-DD.'),
+    '#date_format'      => 'Y-m-d',
+    '#date_text_parts'  => array('year'),
+    '#date_increment'   => 30,
+    '#date_year_range'  => '-1:+3',
+    '#default_value'    => ($deal && $deal->date_expiry) ? date('Y-m-d', $deal->date_expiry) : '',
+  );
+  
+  $form['category'] = array(
+    '#type'           => 'select',
+    '#title'          => t('Deal Category'),
+    '#description'    => t('Please select the best matching Deal Category.'),
+    '#options'        => deal_categories(),
+    '#required'       => TRUE,
+    '#default_value'  => $deal ? $deal->category : '',
+  );
+  
+  $form['location'] = array(
+    '#type'           => 'select',
+    '#title'          => t('Deal Location'),
+    '#description'    => t('Please select the best matching Deal Location'),
+    '#options'        => deal_locations(),
+    '#required'       => TRUE,
+    '#default_value'  => $deal ? $deal->location : '',
+  );
+  
+  $form['tags'] = array(
+    '#type'           => 'textfield',
+    '#title'          => t('Deal Tags'),
+    '#maxlength'      => 100,
+    '#description'    => t('Please enter tags to describe the Deal. Only alphanumeric characters and spaces (to separate multi-word tags) are permitted. Each tag must be separated by a comma.'),
+    '#required'       => TRUE,
+    '#default_value'  => $deal ? $deal->tags : '',
+  );
+  
+  if ($deal) {
+    $form['disabled'] = array(
+      '#type'           => 'checkbox', 
+      '#title'          => t('Status'),
+      '#description'    => t('Check if this deal is disabled.'),
+      '#default_value'  => $deal->disabled,
+    );
+  }
+  
+  $form['#validate'][] = 'deal_info_validate';
+  
+  $form['submit'] = array(
+    '#type'   => 'submit',
+    '#value'  => $deal ? t('Update Deal') : t('Submit Deal'),
+    '#submit' => array($deal ? 'deal_edit_submit' : 'deal_create_submit'),
+    '#weight' => 100,
+  );
+
+  return $form;
+  
+}
+
+/**
+ * Validates a deal info form submission.
+ *
+ * @see deal_info_form()
+ */
+function deal_info_validate($form, &$form_state) {
+  
+  if (!(strpos($form_state['values']['deal_url'], 'http://') === 0 || strpos($form_state['values']['deal_url'], 'https://') === 0)) {
+    $deal_domain = @parse_url('http://' . $form_state['values']['deal_url'], PHP_URL_HOST);
+  }
+  else {
+    $deal_domain = @parse_url($form_state['values']['deal_url'], PHP_URL_HOST);
+  }
+  $alias = deal_url_encode('deals/' . $deal_domain . '/' . $form_state['values']['title']);
+  
+  if (@$form_state['values']['did']) {
+    $deal = deal_load($form_state['values']['did']);
+    $query = db_select('{url_alias}', 'ua')
+      ->condition('source', 'node/' . $deal->dnid, '<>')
+      ->condition('alias', $alias);
+    $query->addExpression('COUNT(pid)');
+    $has_alias = $query
+      ->execute()
+      ->fetchField();
+    if ($has_alias) {
+      form_set_error('', t("Deal Page URL alias has been duplicated. Please check the Deal Title and Deal Page URL again."));
+    }
+  }
+  else {
+    $query = db_select('{url_alias}', 'ua')
+      ->condition('alias', $alias);
+    $query->addExpression('COUNT(pid)');
+    $has_alias = $query
+      ->execute()
+      ->fetchField();
+    if ($has_alias) {
+      form_set_error('', t("Deal Page URL alias has been duplicated. Please check the Deal Title and Deal Page URL again."));
+    }
+  }
+  
+  if (!$form_state['values']['photo_automatic']) {
+    // If required, validate the uploaded photo.
+    $validator_photo = array(
+      'file_validate_is_image'          => array(),
+      'file_validate_image_resolution'  => array(),
+      'file_validate_size'              => array(500 * 1024),
+      'file_validate_extensions'        => array('png gif jpg jpeg'),
+    );
+    
+    $photo_upload = file_save_upload('photo_upload', $validator_photo);
+    if ($photo_upload === FALSE) {
+      form_set_error('photo_upload', t("Failed to upload image. Please confirm file extension and size meets requirements and try again."));
+    }
+    elseif ($photo_upload !== NULL) {
+      $form_state['values']['photo_upload'] = $photo_upload;
+    }
+    else {
+      $form_state['values']['photo_upload'] = '';
+    }
+  }
+  else {
+    $form_state['values']['photo_upload'] = '';
+  }
+  
+  if ($form_state['values']['coupon_code'] && !preg_match('/[a-zA-Z]/', $form_state['values']['coupon_code'])) {
+    form_set_error('coupon_code', t("Coupon code is invalid. Please put one or more alphanumeric character."));
+  }
+  
+  if (@strtotime($form_state['values']['date_expiry']) < @strtotime($form_state['values']['date_start'])) {
+    form_set_error('date_expiry', t("Deal Expiry Date must be after the Deal Start Date."));
+  }
+  
+  if (preg_match('/[^a-zA-Z0-9,\s]/', $form_state['values']['tags'])) {
+    form_set_error('tags', t("Tag/s entered are invalid. Please remove any special characters and re-submit."));
+  }
+  
+}
+
+/**
+* Deal info form presave
+*/
+function deal_info_presave($form, &$form_state, $deal = NULL) {
+  
+  global $user;
+  
+  $form_state['values']['date_start'] = $form_state['values']['date_start'] ? strtotime($form_state['values']['date_start']) : strtotime('today');
+  $form_state['values']['date_expiry'] = $form_state['values']['date_expiry'] ? strtotime($form_state['values']['date_expiry']) + 24 * 60 * 60 - 1 : $form_state['values']['date_start'] + 30 * 24 * 60 * 60 - 1; // Set end of the date_expiry
+  
+  $photo_directory = file_default_scheme() . '://' . 'photos';
+  file_prepare_directory($photo_directory, FILE_CREATE_DIRECTORY);
+  
+  if ($form_state['values']['photo_upload']) {
+    // Photo upload
+    $photo = $form_state['values']['photo_upload'];
+    unset($form_state['values']['photo_upload']);
+    
+    $destination = file_stream_wrapper_uri_normalize($photo_directory . '/photo' . ' - ' . REQUEST_TIME . substr($photo->filename, strrpos($photo->filename, '.') - strlen($photo->filename)));
+    
+    $photo = file_move($photo, $destination, FILE_EXISTS_RENAME);
+    $photo->status = FILE_STATUS_PERMANENT;
+    $photo = file_save($photo);
+    /*$photo_image = image_load($photo->uri);
+    image_scale($photo_image, '120', '90', TRUE);
+    image_save($photo_image);*/ 
+    file_usage_add($photo, 'deal', 'photo', $user->uid);
+    $form_state['values']['photo'] = $photo->fid;
+  }
+  else if ($form_state['values']['photo_automatic']) {
+    $form_state['values']['photo'] = 0;
+  }
+  else {
+    $form_state['values']['photo'] = 0;
+  }
+  
+  if (!(strpos($form_state['values']['deal_url'], 'http://') === 0 || strpos($form_state['values']['deal_url'], 'https://') === 0)) {
+    $deal_domain = @parse_url('http://' . $form_state['values']['deal_url'], PHP_URL_HOST);
+  }
+  else {
+    $deal_domain = @parse_url($form_state['values']['deal_url'], PHP_URL_HOST);
+  }
+  $alias = deal_url_encode('deals/' . $deal_domain . '/' . $form_state['values']['title']);
+  $form_state['values']['alias'] = $alias;
+  
+  if ($deal) {
+    if ($deal->photo && ($form_state['values']['photo'] || $form_state['values']['photo_automatic'])) {
+      file_usage_delete(file_load($deal->photo), 'deal', 'photo', $user->uid);
+      //file_delete(file_load($deal->photo), TRUE);
+    }
+    if ($deal->photo && !$form_state['values']['photo'] && !$form_state['values']['photo_automatic']) {
+      $form_state['values']['photo'] = $deal->photo;
+    }
+  }
+  else {
+    $query = db_select('{deal}', 'd');
+    $query->condition('d.duid', $user->uid);
+    $query->addExpression('COUNT(d.did)', 'deal_count');
+    $deal_count = $query
+      ->execute()
+      ->fetchField();
+    if ($deal_count == 0) { // User posted first deal
+      $form_state['values']['disabled'] = 1;
+    }
+    else {
+      $query = db_select('{deal}', 'd');
+      $query->condition('d.duid', $user->uid);
+      $query->condition('d.date_posted', time() - 24 * 3600, '>');
+      $query->addExpression('COUNT(d.did)', 'deal_count');
+      $deal_count = $query
+        ->execute()
+        ->fetchField();
+      if ($deal_count != 0) { // User posted already one more deals within last 24hr
+        $form_state['values']['disabled'] = 1;
+      }
+      else { // User didn't post one or more deals within last 24hr
+        $form_state['values']['disabled'] = 0;
+      }
+    }
+  }
+  
+  $form_state['values']['deal_url'] = str_replace('http://', '', $form_state['values']['deal_url']);
+  $form_state['values']['deal_url'] = str_replace('https://', '', $form_state['values']['deal_url']);
+  $form_state['values']['deal_url'] = str_replace('www.', '', $form_state['values']['deal_url']);
+  
+  $tags_array = explode(',', $form_state['values']['tags']);
+  $new_tags = array();
+  foreach ($tags_array as $tag) {
+    $tag = preg_replace('/[\s]+/', ' ', $tag);
+    if ($tag != '' && $tag != ' ') {
+      if (substr($tag, 0, 1) == ' ') {
+        $tag = substr($tag, 1);
+      }
+      if (substr($tag, -1) == ' ') {
+        $tag = substr($tag, 0, -1);
+      }
+      $new_tags[] = $tag;
+    }
+  }
+  $form_state['values']['tags'] = implode(',', $new_tags);
+  
+}
+
+/**
+ * Submit handler for the edit deal info form. 
+ */
+function deal_edit_submit($form, &$form_state) {
+  
+  $deal = deal_load($form_state['values']['did']);
+  deal_info_presave($form, $form_state, $deal);
+  
+  $variables = $form_state['values'];
+  
+  $node = node_load($deal->dnid);
+  
+  foreach ($variables as $key => $value) {
+    $node->$key = $value;
+  }
+  
+  $node->title = $variables['title'];
+  $node->status = $variables['disabled'] ? 0 : 1;
+  node_save($node);
+  
+  db_update('{url_alias}')
+    ->fields(array(
+      'alias' => $variables['alias']
+    ))
+    ->condition('source', 'node/' . $deal->dnid)
+    ->execute();
+  
+  db_update('{deal}')
+    ->fields(array(
+      'title'           => $variables['title'],
+      'deal_url'        => $variables['deal_url'],
+      'coupon_code'     => $variables['coupon_code'],
+      'representative'  => $variables['representative'],
+      'date_start'      => $variables['date_start'],
+      'date_expiry'     => $variables['date_expiry'],
+      'category'        => $variables['category'],
+      'location'        => $variables['location'],
+      'photo'           => $variables['photo'],
+      'tags'            => $variables['tags'],
+      'description'     => $variables['description'],
+      'disabled'        => $variables['disabled'],
+    ))
+    ->condition('did', $form_state['values']['did'])
+    ->execute();
+  
+  drupal_set_message(t('Deal information have been updated.'));
+    
+}
+
+/**
+ * Submit handler for the create deal info form. 
+ */
+function deal_create_submit($form, &$form_state) {
+  
+  global $user;
+  
+  deal_info_presave($form, $form_state);
+  
+  $variables = $form_state['values'];
+  
+  $node = new stdClass();
+  
+  foreach ($variables as $key => $value) {
+    $node->$key = $value;
+  }
+  
+  $node->type = 'deal';
+  node_object_prepare($node);
+ 
+  $node->title    = $variables['title'];
+  $node->language = LANGUAGE_NONE;
+
+  $node->body[$node->language][0]['value']   = $variables['description'];
+  $node->body[$node->language][0]['summary'] = text_summary($variables['description']);
+  $node->body[$node->language][0]['format']  = 'filtered_html';
+ 
+  $node->path = array('alias' => $variables['alias']);
+  
+  $node->status = $variables['disabled'] ? 0 : 1;
+
+  node_save($node);
+  
+  $url_pid = db_select('{url_alias}', 'ua')
+    ->fields('ua', array('pid'))
+    ->condition('source', 'node/' . $node->nid)
+    ->execute()
+    ->fetchField();
+  
+  $variables['did'] = db_insert('{deal}')
+    ->fields(array(
+      'title'           => $variables['title'],
+      'dnid'            => $node->nid,
+      'duid'            => $user->uid,
+      'url_pid'         => $url_pid,
+      'deal_url'        => $variables['deal_url'],
+      'coupon_code'     => $variables['coupon_code'],
+      'representative'  => $variables['representative'],
+      'date_start'      => $variables['date_start'],
+      'date_expiry'     => $variables['date_expiry'],
+      'category'        => $variables['category'],
+      'location'        => $variables['location'],
+      'photo'           => $variables['photo'],
+      'tags'            => $variables['tags'],
+      'description'     => $variables['description'],
+      'date_posted'     => time(),
+      'disabled'        => $variables['disabled'],
+      ))
+    ->execute();
+  
+  if (custom_deal_access('administrator')) {
+    $form_state['redirect'] = 'admin/deal';
+  }
+  else {
+    $form_state['redirect'] = '';
+  }
+  
+}
+
+/**
+ * Implements hook_load().
+ */
+function deal_load($nodes) {
+  
+  if (is_array($nodes)) {
+    foreach ($nodes as $node) {
+      $query = db_select('{deal}', 'd');
+      $query->leftJoin('{users}', 'u', 'd.duid=u.uid');
+      $query->leftJoin('{url_alias}', 'ua', 'd.url_pid = ua.pid');
+      $query->condition('d.dnid', $node->nid);
+      $deal = $query
+        ->fields('d')
+        ->fields('u')
+        ->fields('ua')
+        ->execute()
+        ->fetchObject();
+      if (!$deal) {
+        return;
+      }
+        
+      $nodes[$node->nid]->deal = $deal;
+    }
+  }
+  else if ((int)$nodes){
+    $query = db_select('{deal}', 'd');
+    $query->leftJoin('{users}', 'u', 'd.duid=u.uid');
+    $query->leftJoin('{url_alias}', 'ua', 'd.url_pid = ua.pid');
+    $query->condition('d.did', $nodes);
+    $deal = $query
+      ->fields('d')
+      ->fields('u')
+      ->fields('ua')
+      ->execute()
+      ->fetchObject();
+    
+    return $deal;
+  }
+  
+}
+
+function custom_deal_access($node = '') {
+  
+  global $user;
+  
+  if (in_array("administrator", $user->roles)) {
+    return true;
+  }
+  
+  if ($node == 'public') {
+    return true;
+  }
+  
+  if (in_array($node, $user->roles)) {
+    return true;
+  }
+  
+  return false;
+  
+}
+
+/**
+* Get category list for deal
+* 
+*/
+function deal_categories() {
+  
+  return array(
+    1 => 'Accessories',
+    2 => 'Automotive',
+    3 => 'Baby',
+    4 => 'Beauty',
+    5 => 'Books',
+    6 => 'Clothing',
+    7 => 'Electronics',
+    8 => 'Flowers',
+    9 => 'Food',
+    10 => 'Furniture',
+    11 => 'Gifts',
+    12 => 'Health',
+    13 => 'Home & Garden',
+    14 => 'Jewellery',
+    15 => 'Musical Instruments',
+    16 => 'Office Supplies',
+    17 => 'Party Supplies',
+    18 => 'Pets',
+    19 => 'Photography',
+    20 => 'Services',
+    21 => 'Shoes',
+    22 => 'Sporting Goods',
+    23 => 'Toys',
+    24 => 'Travel',
+  );
+  
+}
+
+/**
+* Get category name by category ID
+* 
+* @param int $category_id
+*   Category ID
+*/
+function deal_get_category_name($category_id) {
+  
+  $categories = deal_categories();
+  return $categories[$category_id];
+  
+}
+
+/**
+* Get location list for deal
+* 
+*/
+function deal_locations() {
+  
+  return array(
+    1 => 'Online Only',
+    2 => 'Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi)',
+    3 => 'Surabaya',
+    4 => 'Bandung',
+    5 => 'Medan',
+    6 => 'Semarang',
+    7 => 'Yogyakarta',
+    8 => 'Palembang',
+    9 => 'Bandar Lampung',
+    10 => 'Banjarmasin',
+    11 => 'Pontianak',
+    12 => 'Balikpapan',
+    13 => 'Makassar',
+    14 => 'Ambon',
+    15 => 'Manado',
+    16 => 'Jambi',
+    17 => 'Padang',
+    18 => 'Papua',
+    19 => 'Papua Barat',
+    20 => 'Madura',
+    21 => 'Seluruh Indonesia',
+    22 => 'Batam',
+    23 => 'Bali',
+  );
+  
+}
+
+/**
+* Get location name by location ID
+* 
+* @param int $location_id
+*   Location ID
+*/
+function deal_get_location_name($location_id) {
+  
+  $locations = deal_locations();
+  return $locations[$location_id];
+  
+}
+
+/**
+* Get tags array from tags string line separated by comma
+* 
+* @param string $tag_line
+*   String separated by comma
+*/
+function deal_get_tags_array($tag_line) {
+  
+  $tags_array = explode(',', $tag_line);
+  return $tags_array;
+  
+}
+
+/**
+* Loading rate for specified object
+* 
+* @param int $object_id
+*   For deal
+* @param string $object_type
+*   Voted for deal
+*/
+function deal_load_rate($object_id, $object_type) {
+  
+  global $user;
+  
+  $query = db_select('{deal_rate}', 'dr');
+  $query->addExpression('COUNT(dr.drid)', 'plus');
+  $count_plus = $query
+    ->condition('dr.droid', $object_id)
+    ->condition('dr.rate_for', $object_type)
+    ->condition('dr.rate', 1)
+    ->condition('dr.status', 1)
+    ->execute()
+    ->fetchField();
+    
+  $query = db_select('{deal_rate}', 'dr');
+  $query->addExpression('COUNT(dr.drid)', 'plus');
+  $count_minus = $query
+    ->condition('dr.droid', $object_id)
+    ->condition('dr.rate_for', $object_type)
+    ->condition('dr.rate', -1)
+    ->condition('dr.status', 1)
+    ->execute()
+    ->fetchField();
+    
+  $query = db_select('{deal_rate}', 'dr');
+  $query->addExpression('COUNT(dr.drid)', 'plus');
+  $count_plus_cancelled = $query
+    ->condition('dr.droid', $object_id)
+    ->condition('dr.rate_for', $object_type)
+    ->condition('dr.rate', 1)
+    ->condition('dr.status', -1)
+    ->execute()
+    ->fetchField();
+    
+  $query = db_select('{deal_rate}', 'dr');
+  $query->addExpression('COUNT(dr.drid)', 'plus');
+  $count_minus_cancelled = $query
+    ->condition('dr.droid', $object_id)
+    ->condition('dr.rate_for', $object_type)
+    ->condition('dr.rate', -1)
+    ->condition('dr.status', -1)
+    ->execute()
+    ->fetchField();
+    
+  $rate = deal_load_rate_state($object_id, $object_type);
+    
+  return array(
+    'plus'            => $count_plus,
+    'minus'           => $count_minus,
+    'plus_cancelled'  => $count_plus_cancelled,
+    'minus_cancelled' => $count_minus_cancelled,
+    'voted_state'     => array(
+      'votable'     => (!$user->uid || ($rate && $rate['status'] == 1) ? FALSE : TRUE),
+      'rate'        => ($rate ? $rate['rate'] : FALSE),
+      'date_posted' => ($rate ? date('j M Y - g:i a', $rate['date_posted']) : FALSE),
+      'status'      => ($rate ? $rate['status'] : FALSE),
+    ),
+  );
+  
+}
+
+/**
+* Load specified deal state for current user.
+* 
+* @param int $object_id
+*   content id for Deal
+* @param string $object_type
+*   deal
+*/
+function deal_load_rate_state($object_id, $object_type) {
+  
+  global $user;
+  
+  $rate = db_select('{deal_rate}', 'dr')
+    ->fields('dr')
+    ->condition('dr.droid', $object_id)
+    ->condition('dr.rate_for', $object_type)
+    ->condition('dr.druid', $user->uid)
+    ->execute()
+    ->fetchAssoc();
+    
+  return $rate;
+  
+}
+
+/**
+* Implements hook_delete().
+* 
+* @param stdObject $node
+*   Node object
+*/
+function deal_delete($node) {
+  
+  global $user;
+  
+  $deal = $node->deal;
+  
+  // Delete photo image
+  if ($deal->photo) {
+    $photo = file_load($deal->photo);
+    file_usage_delete($photo, 'deal', 'photo', $user->uid);
+    file_delete($photo, TRUE);
+  }
+  
+  // Delete deal votes
+  db_delete('{deal_rate}')
+    ->condition('droid', $deal->did)
+    ->condition('rate_for', 'deal')
+    ->execute();
+  
+  // Delete deal
+  db_delete('{deal}')
+    ->condition('did', $deal->did)
+    ->execute();
+  
+}
+
+/**
+* Encoding url alias for all special chars
+* 
+* @param string $alias
+*   URL alias to be encoded:
+*   Replacing special chars to -
+*/
+function deal_url_encode($alias) {
+  
+  return preg_replace('/[^a-zA-Z0-9\/\.]+/', '-', $alias);
+  
+}

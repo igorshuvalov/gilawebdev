@@ -1,0 +1,9 @@
+Concept custom - rc2
+
+* Deleted: Animation class
+* Fixed: Icon glyphs
+* Added: New Comment style for forum comment--node-forum.tpl.php
+
+---
+branch: master
+id    : 6c217759330664b6d4ce89f046cf5e045a26a2b0

@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * This file contains various hooks
+ * implemented to extend the functionality of
+ * other modules.
+ */
+
+ /**
+  * Implements hook_fboauth_user_save().
+  * @param
+  *  $account: Account details of newly created user.
+  * @param
+  *  $fbuser: Facebook user id.
+  *
+  * By-pass admin approval for users registering
+  * through fboauth module.
+  */
+function gilaweb_tweaks_fboauth_user_save($account, $fbuser) {
+  // Set uid.
+  $form_state['uid'] = $uid = $account->uid;
+  // Unblock the user.
+  db_query("UPDATE {users} SET status=1 WHERE uid=$uid");
+  // Login the user.
+  user_login_submit(array(), $form_state);
+}
