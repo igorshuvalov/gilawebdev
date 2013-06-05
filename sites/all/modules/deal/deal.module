@@ -639,7 +639,7 @@ function deal_info_validate($form, &$form_state) {
   else {
     $deal_domain = @parse_url($form_state['values']['deal_url'], PHP_URL_HOST);
   }
-  $alias = deal_url_encode('deals/' . $deal_domain . '/' . $form_state['values']['title']);
+  $alias = 'deals/' . $deal_domain . '/' . deal_url_encode($form_state['values']['title']);
   
   if (@$form_state['values']['did']) {
     $deal = deal_load($form_state['values']['did']);
@@ -746,7 +746,7 @@ function deal_info_presave($form, &$form_state, $deal = NULL) {
   else {
     $deal_domain = @parse_url($form_state['values']['deal_url'], PHP_URL_HOST);
   }
-  $alias = deal_url_encode('deals/' . $deal_domain . '/' . $form_state['values']['title']);
+  $alias = 'deals/' . $deal_domain . '/' . deal_url_encode($form_state['values']['title']);
   $form_state['values']['alias'] = $alias;
   
   if ($deal) {
@@ -1228,6 +1228,6 @@ function deal_delete($node) {
 */
 function deal_url_encode($alias) {
   
-  return preg_replace('/[^a-zA-Z0-9\/\.]+/', '-', $alias);
+  return preg_replace('/[^a-zA-Z0-9\/]+/', '-', $alias);
   
 }
