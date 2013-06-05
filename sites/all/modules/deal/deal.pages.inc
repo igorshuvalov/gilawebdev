@@ -7,7 +7,7 @@ function deal_new_items($key = NULL) {
   
   $query = db_select('{deal}', 'd')
     ->condition('d.disabled', 0)
-    ->condition('d.date_posted', strtotime('today') - 3 * 24 * 3600, '>');
+    ->condition('d.date_posted', strtotime('today') - 7 * 24 * 3600, '>');
   
   switch($key) {
     case 'noexpired':
@@ -62,7 +62,7 @@ function deal_new_items_noexpired() {
 */
 function deal_popular_items($key = NULL) {
   
-  $ago_3days = strtotime('today') - 3 * 24 * 3600;
+  $ago_7days = strtotime('today') - 7 * 24 * 3600;
   $query = db_select('{deal}', 'd')
     ->condition('d.disabled', 0);
     
@@ -78,13 +78,13 @@ function deal_popular_items($key = NULL) {
       break;
   }
   
-  $query->where("(SELECT SUM(dr.rate) rates FROM deal_rate AS dr WHERE dr.droid=d.did AND dr.rate_for='deal' AND dr.status=1 AND dr.date_posted > :last_3days) > 0", array(':last_3days' => $ago_3days));
+  $query->where("(SELECT SUM(dr.rate) rates FROM deal_rate AS dr WHERE dr.droid=d.did AND dr.rate_for='deal' AND dr.status=1 AND dr.date_posted > :last_7days) > 0", array(':last_7days' => $ago_7days));
   $count_query = clone $query;
   $count_query->addExpression('COUNT(d.did)');  
   $query = $query->extend('PagerDefault');
   $query->leftJoin('{url_alias}', 'ua', 'd.url_pid=ua.pid');  
   $query->leftJoin('{deal_rate}', 'dr', "d.did=dr.droid AND dr.rate_for='deal' AND dr.status=1");
-  $query->condition('dr.date_posted', $ago_3days, '>');
+  $query->condition('dr.date_posted', $ago_7days, '>');
   $query->addExpression("SUM(dr.rate)", 'rates');
   $query->leftJoin('{users}', 'u', 'd.duid=u.uid');
   $query
@@ -127,7 +127,7 @@ function deal_expiring_soon_items() {
   $query = db_select('{deal}', 'd')
     ->condition('d.disabled', 0)
     ->condition('d.date_expiry', time(), '>')
-    ->condition('d.date_expiry', strtotime('today') + 4 * 24 * 3600, '<');
+    ->condition('d.date_expiry', strtotime('today') + 8 * 24 * 3600, '<');
   $count_query = clone $query;
   $count_query->addExpression('COUNT(d.did)');
   $query = $query->extend('PagerDefault');
@@ -155,7 +155,7 @@ function deal_starting_soon_items() {
   $query = db_select('{deal}', 'd')
     ->condition('d.disabled', 0)
     ->condition('d.date_start', time(), '>')
-    ->condition('d.date_start', strtotime('today') + 3 * 24 * 3600, '<');
+    ->condition('d.date_start', strtotime('today') + 7 * 24 * 3600, '<');
   $count_query = clone $query;
   $count_query->addExpression('COUNT(d.did)');
   $query = $query->extend('PagerDefault');
@@ -283,7 +283,7 @@ function deal_items_by_category_filter($deal_category, $filter, $key = NULL) {
   switch($filter) {
     case 'new':
       $subtitle = t('New Deals');
-      $query->condition('d.date_posted', strtotime('today') - 3 * 24 * 3600, '>');
+      $query->condition('d.date_posted', strtotime('today') - 7 * 24 * 3600, '>');
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');
       $query = $query->extend('PagerDefault');
@@ -301,14 +301,14 @@ function deal_items_by_category_filter($deal_category, $filter, $key = NULL) {
       break;
     case 'popular':
       $subtitle = t('Popular Deals');
-      $ago_3days = strtotime('today') - 3 * 24 * 3600;
-      $query->where("(SELECT SUM(dr.rate) rates FROM deal_rate AS dr WHERE dr.droid=d.did AND dr.rate_for='deal' AND dr.status=1 AND dr.date_posted > :last_3days) > 0", array(':last_3days' => $ago_3days));
+      $ago_7days = strtotime('today') - 7 * 24 * 3600;
+      $query->where("(SELECT SUM(dr.rate) rates FROM deal_rate AS dr WHERE dr.droid=d.did AND dr.rate_for='deal' AND dr.status=1 AND dr.date_posted > :last_7days) > 0", array(':last_7days' => $ago_7days));
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');  
       $query = $query->extend('PagerDefault');
       $query->leftJoin('{url_alias}', 'ua', 'd.url_pid=ua.pid');  
       $query->leftJoin('{deal_rate}', 'dr', "d.did=dr.droid AND dr.rate_for='deal' AND dr.status=1");
-      $query->condition('dr.date_posted', $ago_3days, '>');
+      $query->condition('dr.date_posted', $ago_7days, '>');
       $query->addExpression("SUM(dr.rate)", 'rates');
       $query->leftJoin('{users}', 'u', 'd.duid=u.uid');
       $query
@@ -324,7 +324,7 @@ function deal_items_by_category_filter($deal_category, $filter, $key = NULL) {
       $subtitle = t('Deals Ending Soon');
       $query
         ->condition('d.date_expiry', time(), '>')
-        ->condition('d.date_expiry', strtotime('today') + 4 * 24 * 3600, '<');
+        ->condition('d.date_expiry', strtotime('today') + 8 * 24 * 3600, '<');
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');
       $query->leftJoin('{url_alias}', 'ua', 'd.url_pid = ua.pid');
@@ -342,7 +342,7 @@ function deal_items_by_category_filter($deal_category, $filter, $key = NULL) {
       $subtitle = t('Deals Starting Soon');
       $query
         ->condition('d.date_start', time(), '>')
-        ->condition('d.date_start', strtotime('today') + 3 * 24 * 3600, '<');
+        ->condition('d.date_start', strtotime('today') + 7 * 24 * 3600, '<');
       $query->leftJoin('{url_alias}', 'ua', 'd.url_pid = ua.pid');
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');
@@ -514,7 +514,7 @@ function deal_items_by_location_filter($deal_location, $filter, $key = NULL) {
   switch($filter) {
     case 'new':
       $subtitle = t('New Deals');
-      $query->condition('d.date_posted', strtotime('today') - 3 * 24 * 3600, '>');
+      $query->condition('d.date_posted', strtotime('today') - 7 * 24 * 3600, '>');
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');
       $query = $query->extend('PagerDefault');
@@ -532,14 +532,14 @@ function deal_items_by_location_filter($deal_location, $filter, $key = NULL) {
       break;
     case 'popular':
       $subtitle = t('Popular Deals');
-      $ago_3days = strtotime('today') - 3 * 24 * 3600;
-      $query->where("(SELECT SUM(dr.rate) rates FROM deal_rate AS dr WHERE dr.droid=d.did AND dr.rate_for='deal' AND dr.status=1 AND dr.date_posted > :last_3days) > 0", array(':last_3days' => $ago_3days));
+      $ago_7days = strtotime('today') - 7 * 24 * 3600;
+      $query->where("(SELECT SUM(dr.rate) rates FROM deal_rate AS dr WHERE dr.droid=d.did AND dr.rate_for='deal' AND dr.status=1 AND dr.date_posted > :last_7days) > 0", array(':last_7days' => $ago_7days));
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');  
       $query = $query->extend('PagerDefault');
       $query->leftJoin('{url_alias}', 'ua', 'd.url_pid=ua.pid');  
       $query->leftJoin('{deal_rate}', 'dr', "d.did=dr.droid AND dr.rate_for='deal' AND dr.status=1");
-      $query->condition('dr.date_posted', $ago_3days, '>');
+      $query->condition('dr.date_posted', $ago_7days, '>');
       $query->addExpression("SUM(dr.rate)", 'rates');
       $query->leftJoin('{users}', 'u', 'd.duid=u.uid');
       $query
@@ -555,7 +555,7 @@ function deal_items_by_location_filter($deal_location, $filter, $key = NULL) {
       $subtitle = t('Deals Ending Soon');
       $query
         ->condition('d.date_expiry', time(), '>')
-        ->condition('d.date_expiry', strtotime('today') + 4 * 24 * 3600, '<');
+        ->condition('d.date_expiry', strtotime('today') + 8 * 24 * 3600, '<');
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');
       $query->leftJoin('{url_alias}', 'ua', 'd.url_pid = ua.pid');
@@ -573,7 +573,7 @@ function deal_items_by_location_filter($deal_location, $filter, $key = NULL) {
       $subtitle = t('Deals Starting Soon');
       $query
         ->condition('d.date_start', time(), '>')
-        ->condition('d.date_start', strtotime('today') + 3 * 24 * 3600, '<');
+        ->condition('d.date_start', strtotime('today') + 7 * 24 * 3600, '<');
       $query->leftJoin('{url_alias}', 'ua', 'd.url_pid = ua.pid');
       $count_query = clone $query;
       $count_query->addExpression('COUNT(d.did)');
