@@ -1189,6 +1189,44 @@ function deal_load_rate_state($object_id, $object_type) {
 }
 
 /**
+* Build homepage contents
+*   pulling 10 most popular deals with the most votes in the past 24 hours.
+* 
+*/
+function deal_home_contents() {
+  
+  $ago_1day = strtotime('today') - 24 * 3600;
+  $query = db_select('{deal}', 'd')
+    ->condition('d.disabled', 0)
+    ->condition('d.date_expiry', strtotime('now'), '>');
+  
+  $query->where("(SELECT SUM(dr.rate) rates FROM deal_rate AS dr WHERE dr.droid=d.did AND dr.rate_for='deal' AND dr.status=1 AND dr.date_posted > :last_1day) > 0", array(':last_1day' => $ago_1day));
+  $query->leftJoin('{url_alias}', 'ua', 'd.url_pid=ua.pid');  
+  $query->leftJoin('{deal_rate}', 'dr', "d.did=dr.droid AND dr.rate_for='deal' AND dr.status=1");
+  $query->condition('dr.date_posted', $ago_1day, '>');
+  $query->addExpression("SUM(dr.rate)", 'rates');
+  $query->leftJoin('{users}', 'u', 'd.duid=u.uid');
+  $query
+    ->fields('d')
+    ->fields('ua')
+    ->fields('u')
+    ->range(0, 10)
+    ->groupBy('dr.droid')
+    ->orderBy('rates', 'DESC');
+  
+  $deals = $query->execute()->fetchAllAssoc('did', PDO::FETCH_OBJ);
+  
+  return theme(
+    'deal_list', 
+    array(
+      'list'            => $deals, 
+      'pager'           => '',
+    )
+  );
+  
+}
+
+/**
 * Implements hook_delete().
 * 
 * @param stdObject $node
