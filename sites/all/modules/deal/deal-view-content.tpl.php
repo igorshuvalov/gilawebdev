@@ -62,7 +62,7 @@
       <p class="deal-description"><?php echo $item->description; ?></p>
       <small class="deal-submitted">
         <?php 
-          echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . ', ' . $node->comment_count . 'comment(s)';
+          echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . ', ' . $node->comment_count . ' comment(s)';
         ?>
       </small>
       <div class="deal-representative"><strong>Store Representative:</strong> <?php if ($item->representative): ?>Yes<?php else: ?>No<?php endif; ?></div>
