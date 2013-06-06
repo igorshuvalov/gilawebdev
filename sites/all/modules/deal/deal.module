@@ -137,6 +137,14 @@ function deal_menu() {
     'file'              => 'deal.admin.inc',
   );
   
+  $items['deal/front-page'] = array(
+    'title'             => 'Home Page',
+    'description'       => 'Deals for front page.',
+    'page callback'     => 'deal_home_contents',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+  );
+  
   // Recent deals list page
   $items['deal/new/list'] = array(
     'title'             => 'New Deals',
