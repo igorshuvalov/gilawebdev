@@ -1,8 +1,4 @@
-<?php if (!user_access('post comments')): ?>
-<div class="">
-  <?php echo theme('comment_post_forbidden', array('node' => $node)); ?>
-</div>
-<?php endif; ?>
+
 <section id="comments" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
 

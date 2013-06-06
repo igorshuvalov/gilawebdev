@@ -28,6 +28,11 @@
     <footer>
       <?php print render($content['field_tags']); ?>
       <?php print render($content['links']); ?>
+      <?php if (!user_access('post comments')): ?>
+        <div class="">
+          <?php echo theme('comment_post_forbidden', array('node' => $node)); ?>
+        </div>
+      <?php endif; ?>
     </footer>
   <?php endif; ?>
 
