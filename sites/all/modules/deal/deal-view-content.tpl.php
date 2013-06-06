@@ -59,7 +59,7 @@
         </div>
       <?php endif; ?>
       
-      <p class="deal-description"><?php echo $item->description; ?></p>
+      <p class="deal-description"><?php echo nl2br($item->description); ?></p>
       <small class="deal-submitted">
         <?php 
           echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . ', ' . $node->comment_count . ' comment(s)';
