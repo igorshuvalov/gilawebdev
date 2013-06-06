@@ -45,8 +45,13 @@
       endif;
     ?>
     </div>
-
+    
     <div class="deal-metadata">
+      <small class="deal-submitted">
+        <?php 
+          echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted);
+        ?>
+      </small>
       <div class="deal-url"><strong>URL:</strong> <a href="http://www.<?php echo $item->deal_url; ?>" target="_blank">http://www.<?php echo $item->deal_url; ?></a></div>
 
       <?php if ($item->coupon_code): ?>
@@ -60,11 +65,7 @@
       <?php endif; ?>
       
       <p class="deal-description"><?php echo nl2br($item->description); ?></p>
-      <small class="deal-submitted">
-        <?php 
-          echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . ', ' . $node->comment_count . ' comment(s)';
-        ?>
-      </small>
+      
       <div class="deal-representative"><strong>Store Representative:</strong> <?php if ($item->representative): ?>Yes<?php else: ?>No<?php endif; ?></div>
 
       <?php if ($item->date_start): ?>

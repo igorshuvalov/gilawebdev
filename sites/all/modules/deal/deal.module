@@ -138,7 +138,7 @@ function deal_menu() {
   );
   
   $items['deal/front-page'] = array(
-    'title'             => 'Home Page',
+    'title'             => 'Today\'s Best Deals',
     'description'       => 'Deals for front page.',
     'page callback'     => 'deal_home_contents',
     'access arguments'  => array('public'),
