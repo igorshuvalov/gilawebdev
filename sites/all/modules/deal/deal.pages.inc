@@ -931,6 +931,7 @@ function deal_live_create() {
       'post'    => true,
       'comment' => true,
       'vote'    => true,
+      'timestamp' => 0,
     )
   );
   
@@ -948,6 +949,7 @@ function deal_live_filter() {
       'post'    => $_REQUEST['post'] == 'true',
       'comment' => $_REQUEST['comment'] == 'true',
       'vote'    => $_REQUEST['vote'] == 'true',
+      'timestamp' => 0,
     )
   );
   
@@ -996,7 +998,7 @@ function deal_live($action_type, $action_keys) {
     $nodes_query = db_select('{node}', 'n');
     $nodes_query->condition('status', '1');
     if ($action_type == 'update') {
-      $nodes_query->condition('created', $action_keys['timestamp'], '>');
+      //$nodes_query->condition('created', $action_keys['timestamp'], '>');
     }
     $nodes_query->fields('n');
     $nodes_query->range(0, $event_limit);
@@ -1010,7 +1012,7 @@ function deal_live($action_type, $action_keys) {
     $comments_query = db_select('{comment}', 'c');
     $comments_query->condition('status', '1');
     if ($action_type == 'update') {
-      $comments_query->condition('created', $action_keys['timestamp'], '>');
+      //$comments_query->condition('created', $action_keys['timestamp'], '>');
     }
     $comments_query->fields('c');
     $comments_query->range(0, $event_limit);
@@ -1024,7 +1026,7 @@ function deal_live($action_type, $action_keys) {
     $votes_query = db_select('{deal_rate}', 'dr');
     $votes_query->condition('status', '1');
     if ($action_type == 'update') {
-      $votes_query->condition('date_posted', $action_keys['timestamp'], '>');
+      //$votes_query->condition('date_posted', $action_keys['timestamp'], '>');
     }
     $votes_query->fields('dr');
     $votes_query->range(0, $event_limit);
@@ -1039,9 +1041,9 @@ function deal_live($action_type, $action_keys) {
   usort($actions, '_cmp_created');
   
   $output = '';
-  $last_timestamp = isset($action_keys['timestamp']) ? $action_keys['timestamp'] : 0;
+  $last_timestamp = $action_keys['timestamp'];
   
-  foreach ($actions as $key => $action) {    
+  foreach ($actions as $key => $action) {
     if (isset($action->vid)) { // If node object
       $created = $action->created;
       $uid = $action->uid;
@@ -1092,7 +1094,7 @@ function deal_live($action_type, $action_keys) {
     $user_info = user_load($uid);
     $user = l($user_info->name, 'user/' . $uid);
     
-    $output .= '<tr>';
+    $output .= '<tr' . ($action_keys['timestamp'] < $created ? ' class="new"' : '') . '>';
     $output .= '<td>' . $time . '</td>';
     $output .= '<td>' . $user . '</td>';
     $output .= '<td align="center">' . $action_name . '</td>';

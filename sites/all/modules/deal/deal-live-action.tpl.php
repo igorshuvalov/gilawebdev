@@ -1,5 +1,6 @@
 <?php
 if ($action_type == 'create'):
+  //drupal_add_js(drupal_get_path('module', 'deal') . '/js/jquery-ui.js');
   drupal_add_js(drupal_get_path('module', 'deal') . '/js/jquery.timer.js');
   drupal_add_js(drupal_get_path('module', 'deal') . '/js/deal-live-action.js');
 ?>

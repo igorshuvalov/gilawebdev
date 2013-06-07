@@ -19,13 +19,14 @@ jQuery('document').ready(function() {
             jQuery(this).remove();
           }
         });
+        //jQuery('#live_events tbody tr.new').css({backgroundColor:'#ff0'}).animate({backgroundColor: '#fff'});
       }
     });
   });
   liveUpdateInterval.set({
     time: 10000,
     autostart: true
-  })
+  });
   jQuery('#live_post, #live_comment, #live_vote').change(function() {
     liveUpdateInterval.stop();
     jQuery.ajax({
@@ -40,6 +41,7 @@ jQuery('document').ready(function() {
       success: function(rsp) {
         jQuery('#live_events tbody').html(rsp.html);
         jQuery('#live_timestamp').val(rsp.timestamp);
+        //jQuery('#live_events tbody tr.new').css({backgroundColor:'#ff0'}).animate({backgroundColor: '#fff'});
         liveUpdateInterval.play(true);
       }
     });
