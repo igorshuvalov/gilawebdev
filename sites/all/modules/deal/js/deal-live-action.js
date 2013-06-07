@@ -12,7 +12,7 @@ jQuery('document').ready(function() {
       },
       dataType: 'json',
       success: function(rsp) {
-        jQuery('#live_events tbody').prepend(rsp.html);
+        jQuery('#live_events tbody').html(rsp.html);
         jQuery('#live_timestamp').val(rsp.timestamp);
         jQuery('#live_events tbody tr').each(function(i) {
           if (i >= event_limit) {
