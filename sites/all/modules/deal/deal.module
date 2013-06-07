@@ -374,7 +374,7 @@ function deal_menu() {
   
   // Live view 
   $items['live'] = array(
-    'title'             => 'Live Action',
+    'title'             => 'Live! Activity',
     'description'       => 'Live view for post, comment and votes.',
     'page callback'     => 'deal_live_create',
     'access arguments'  => array('public'),
