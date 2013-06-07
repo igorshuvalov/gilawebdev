@@ -13,8 +13,6 @@ jQuery('document').ready(function() {
       success: function(rsp) {
         jQuery('#live_events tbody').html(rsp.html);
         jQuery('#live_timestamp').val(rsp.timestamp);
-        jQuery('#live_events tbody tr').each(function(i) {
-        });
         //jQuery('#live_events tbody tr.new').css({backgroundColor:'#ff0'}).animate({backgroundColor: '#fff'});
       }
     });
