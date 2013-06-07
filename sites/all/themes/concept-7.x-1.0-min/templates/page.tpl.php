@@ -102,13 +102,24 @@ if ( !empty($page['raw_top']) ||
   </div>
   <?php endif; ?>
 
-<?php if (theme_get_setting('breadcrumb') && $breadcrumb) : ?>
+<?php 
+  if (
+    theme_get_setting('breadcrumb') 
+    || $_GET['q'] == 'forum'
+    || strpos($breadcrumb, '/forum')
+    || @$node->type == 'forum' 
+  ):
+    if ($breadcrumb) : 
+?>
 <div class="row">
   <div class="span12">
   <?php if ($breadcrumb){ print $breadcrumb; }  ?>
   </div>
 </div>
-<?php endif;  ?>
+<?php 
+    endif;
+  endif;  
+?>
 
 
   <div class="row">
