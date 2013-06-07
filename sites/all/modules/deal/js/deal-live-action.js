@@ -24,7 +24,7 @@ jQuery('document').ready(function() {
     });
   });
   liveUpdateInterval.set({
-    time: 10000,
+    time: 30000,
     autostart: true
   });
   jQuery('#live_post, #live_comment, #live_vote').change(function() {
