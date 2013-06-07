@@ -1,5 +1,4 @@
 jQuery('document').ready(function() {
-  var event_limit = 10;
   var liveUpdateInterval = jQuery.timer(function() {
     jQuery.ajax({
       url: '/live/update',
@@ -15,16 +14,13 @@ jQuery('document').ready(function() {
         jQuery('#live_events tbody').html(rsp.html);
         jQuery('#live_timestamp').val(rsp.timestamp);
         jQuery('#live_events tbody tr').each(function(i) {
-          if (i >= event_limit) {
-            jQuery(this).remove();
-          }
         });
         //jQuery('#live_events tbody tr.new').css({backgroundColor:'#ff0'}).animate({backgroundColor: '#fff'});
       }
     });
   });
   liveUpdateInterval.set({
-    time: 30000,
+    time: 60000,
     autostart: true
   });
   jQuery('#live_post, #live_comment, #live_vote').change(function() {

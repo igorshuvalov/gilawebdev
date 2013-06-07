@@ -992,7 +992,7 @@ function deal_live($action_type, $action_keys) {
   $comments = array();
   $votes = array();
   
-  $event_limit = 10;
+  $event_limit = 25;
   
   if ($action_keys['post']) {
     $nodes_query = db_select('{node}', 'n');

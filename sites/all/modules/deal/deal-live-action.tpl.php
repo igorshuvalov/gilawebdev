@@ -9,13 +9,13 @@ if ($action_type == 'create'):
     <input type="checkbox"  id="live_vote" checked /> Votes
     <input type="hidden" id="live_timestamp" value="<?php echo $timestamp; ?>" />
     <BR><BR>
-    <table id="live_events">
+    <table id="live_events" width="100%">
       <thead>
-        <th width="120" align="left">Time</th>
-        <th width="120" align="left">User</th>
-        <th width="80">Action</th>
-        <th width="550" align="left">Subject</th>
-        <th width="70" align="left">Type</th>
+        <th align="left">Time</th>
+        <th align="left">User</th>
+        <th >Action</th>
+        <th align="left">Subject</th>
+        <th align="left">Type</th>
       </thead>
       <tbody>
 <?php
