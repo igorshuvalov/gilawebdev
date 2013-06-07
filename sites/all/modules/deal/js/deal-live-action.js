@@ -1,6 +1,6 @@
 jQuery('document').ready(function() {
   var event_limit = 10;
-  var liveUpdateInterval = function() {
+  var liveUpdateInterval = jQuery.timer(function() {
     jQuery.ajax({
       url: '/live/update',
       type: 'POST',
@@ -21,10 +21,13 @@ jQuery('document').ready(function() {
         });
       }
     });
-  };
-  var liveUpdateTimer = window.setInterval(liveUpdateInterval, 10000);
+  });
+  liveUpdateInterval.set({
+    time: 10000,
+    autostart: true
+  })
   jQuery('#live_post, #live_comment, #live_vote').change(function() {
-    window.clearInterval(liveUpdateTimer);
+    liveUpdateInterval.stop();
     jQuery.ajax({
       url: '/live/filter',
       type: 'POST',
@@ -37,7 +40,7 @@ jQuery('document').ready(function() {
       success: function(rsp) {
         jQuery('#live_events tbody').html(rsp.html);
         jQuery('#live_timestamp').val(rsp.timestamp);
-        var liveUpdateTimer = window.setInterval(liveUpdateInterval, 10000);
+        liveUpdateInterval.play(true);
       }
     });
   });
