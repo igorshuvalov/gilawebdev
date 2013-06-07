@@ -70,6 +70,14 @@ function deal_theme() {
         'list' => NULL,
       ),
     ),
+    'deal_live_action' => array(
+      'template' => 'deal-live-action',
+      'variables' => array(
+        'action_type' => NULL,
+        'content' => NULL,
+        'timestamp' => NULL,
+      ),
+    ),
   );
   
 }
@@ -363,6 +371,36 @@ function deal_menu() {
     'type'              => MENU_LOCAL_ACTION,
     'file'              => 'deal.pages.inc',
   );
+  
+  // Live view 
+  $items['live'] = array(
+    'title'             => 'Live Action',
+    'description'       => 'Live view for post, comment and votes.',
+    'page callback'     => 'deal_live_create',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Live view filter
+  $items['live/filter'] = array(
+    'title'             => 'Live Filter Action',
+    'description'       => 'Live view filter for post, comment and votes.',
+    'page callback'     => 'deal_live_filter',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
+  
+  // Live view update timer
+  $items['live/update'] = array(
+    'title'             => 'Live Update Action',
+    'description'       => 'Live view update for post, comment and votes.',
+    'page callback'     => 'deal_live_update',
+    'access arguments'  => array('public'),
+    'access callback'   => array('custom_deal_access'),
+    'file'              => 'deal.pages.inc',
+  );
     
   return $items;
   
@@ -435,11 +473,11 @@ function deal_form($node, &$form_state) {
 function deal_node_form($form, &$form_state, $node) {
   
   if (@$node->nid) {
-    $form = deal_info_form($form, &$form_state, $node->deal);
+    $form = deal_info_form($form, $form_state, $node->deal);
   }
   else {
     drupal_set_title(t('Submit Deal'));
-    $form = deal_info_form($form, &$form_state);
+    $form = deal_info_form($form, $form_state);
   }
   
   $form['#node'] = $node;
@@ -1227,8 +1265,8 @@ function deal_home_contents() {
   return theme(
     'deal_list', 
     array(
-      'list'            => $deals, 
-      'pager'           => '',
+      'list'  => $deals, 
+      'pager' => '',
     )
   );
   

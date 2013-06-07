@@ -918,3 +918,252 @@ function deal_votes_view($id, $object_type) {
   return $output;
   
 }
+
+/**
+* Display live action page for first loading
+* 
+*/
+function deal_live_create() {
+  
+  return deal_live(
+    'create',
+    array(
+      'post'    => true,
+      'comment' => true,
+      'vote'    => true,
+    )
+  );
+  
+}
+
+/**
+* Display live action page for type filters
+* 
+*/
+function deal_live_filter() {
+  
+  return deal_live(
+    'filter',
+    array(
+      'post'    => $_REQUEST['post'] == 'true',
+      'comment' => $_REQUEST['comment'] == 'true',
+      'vote'    => $_REQUEST['vote'] == 'true',
+    )
+  );
+  
+}
+
+/**
+* Display live action page for updates
+* 
+*/
+function deal_live_update() {
+  
+  return deal_live(
+    'update',
+    array(
+      'post'      => $_REQUEST['post'] == 'true',
+      'comment'   => $_REQUEST['comment'] == 'true',
+      'vote'      => $_REQUEST['vote'] == 'true',
+      'timestamp' => $_REQUEST['timestamp'],
+    )
+  );
+  
+}
+
+/**
+* Live view feature
+* 
+* @param string $action_type
+*   'create' : loading page first
+*   'filter' : when user click filter option
+*   'update' : updating timer
+* @param array $action_keys
+*   post : events for deal & forum & pages
+*   comment : events for comment
+*   vote : events for voting
+*   timestamp : last updates time
+*/
+function deal_live($action_type, $action_keys) {
+  
+  $nodes = array();
+  $comments = array();
+  $votes = array();
+  
+  $event_limit = 10;
+  
+  if ($action_keys['post']) {
+    $nodes_query = db_select('{node}', 'n');
+    $nodes_query->condition('status', '1');
+    if ($action_type == 'update') {
+      $nodes_query->condition('created', $action_keys['timestamp'], '>');
+    }
+    $nodes_query->fields('n');
+    $nodes_query->range(0, $event_limit);
+    $nodes_query->orderBy('created', 'DESC');
+    $nodes = $nodes_query
+      ->execute()
+      ->fetchAllAssoc('nid', PDO::FETCH_OBJ);
+  }
+  
+  if ($action_keys['comment']) {
+    $comments_query = db_select('{comment}', 'c');
+    $comments_query->condition('status', '1');
+    if ($action_type == 'update') {
+      $comments_query->condition('created', $action_keys['timestamp'], '>');
+    }
+    $comments_query->fields('c');
+    $comments_query->range(0, $event_limit);
+    $comments_query->orderBy('created', 'DESC');
+    $comments = $comments_query
+      ->execute()
+      ->fetchAllAssoc('cid', PDO::FETCH_OBJ);
+  }
+    
+  if ($action_keys['vote']) {
+    $votes_query = db_select('{deal_rate}', 'dr');
+    $votes_query->condition('status', '1');
+    if ($action_type == 'update') {
+      $votes_query->condition('date_posted', $action_keys['timestamp'], '>');
+    }
+    $votes_query->fields('dr');
+    $votes_query->range(0, $event_limit);
+    $votes_query->orderBy('date_posted', 'DESC');
+    $votes = $votes_query
+      ->execute()
+      ->fetchAllAssoc('drid', PDO::FETCH_OBJ);
+  }
+  
+  $actions = array_merge($nodes, $comments, $votes);
+  
+  usort($actions, '_cmp_created');
+  
+  $output = '';
+  $last_timestamp = isset($action_keys['timestamp']) ? $action_keys['timestamp'] : 0;
+  
+  foreach ($actions as $key => $action) {    
+    if (isset($action->vid)) { // If node object
+      $created = $action->created;
+      $uid = $action->uid;
+      $action_name = 'post';
+      $node = node_load($action->nid);
+      $title = '<a href="' . url('node/' . $node->nid) . '">' . $node->title . '</a>';
+      $type = $action->type;
+    }
+    else if (isset($action->cid)) { // If comment object
+      $created = $action->created;
+      $uid = $action->uid;
+      $action_name = 'comment';
+      $node = node_load($action->nid);
+      $comment = comment_load($action->cid);
+      $uri = entity_uri('comment', $comment);
+      $uri['options'] += array('attributes' => array('rel' => 'bookmark'));
+      $title = l($node->title, $uri['path'], $uri['options']);
+      $type = 'comment';
+    }
+    else if (isset($action->drid)) { // If vote object
+      $created = $action->date_posted;
+      $uid = $action->druid;
+      if ($action->rate == 1) {
+        $action_name = 'vote up';
+      }
+      else if ($action->rate == -1) {
+        $action_name = 'vote down';
+      }
+      $deal = deal_load($action->droid);
+      $title = '<a href="' . url('node/' . $deal->dnid) . '">' . $deal->title . '</a>';
+      $type = 'vote';
+    }
+    
+    $before_created = strtotime('now') - $created;
+    if ($before_created < 60) {
+      $time = $before_created . ' sec ago';
+    }
+    else if ($before_created < 3600) {
+      $time = (int)($before_created / 60) . ' min ago';
+    }
+    else if ($created > strtotime('today')) {
+      $time = 'Today ' . date('H:i', $created);
+    }
+    else {
+      $time = date('Y/m/d H:i', $created);
+    }
+    
+    $user_info = user_load($uid);
+    $user = l($user_info->name, 'user/' . $uid);
+    
+    $output .= '<tr>';
+    $output .= '<td>' . $time . '</td>';
+    $output .= '<td>' . $user . '</td>';
+    $output .= '<td align="center">' . $action_name . '</td>';
+    $output .= '<td>' . $title . '</td>';
+    $output .= '<td>' . $type . '</td>';
+    $output .= '</tr>';
+    
+    if ($last_timestamp < $created)
+      $last_timestamp = $created;
+    
+    if ($key == ($event_limit - 1))
+      break;
+  }
+  
+  $output .= '';
+  
+  switch ($action_type) {
+    case 'create':
+      return theme('deal_live_action',
+        array(
+          'action_type'   => $action_type,
+          'content'       => $output,
+          'timestamp'     => $last_timestamp,
+        )
+      );
+      break;
+    case 'filter':
+      return drupal_json_output(
+        array(
+          'html' => theme('deal_live_action',
+            array(
+              'action_type' => $action_type,
+              'content'     => $output,
+            )
+          ),
+          'timestamp' => $last_timestamp,
+        )
+      );      
+      break;
+    case 'update':
+      return drupal_json_output(
+        array(
+          'html' => theme('deal_live_action',
+            array(
+              'action_type' => $action_type,
+              'content'     => $output,
+            )
+          ),
+          'timestamp' => $last_timestamp,
+        )
+      );      
+      break;
+  }
+  
+}
+
+/**
+* callback for comparing action posts created date
+* 
+* @param mixed $action1
+* @param mixed $action2
+*/
+function _cmp_created($action1, $action2) {
+  
+  $created1 = isset($action1->created) ? $action1->created : $action1->date_posted;
+  $created2 = isset($action2->created) ? $action2->created : $action2->date_posted;
+  
+  if ($created1 > $created2) {
+    return FALSE;
+  }
+  
+  return TRUE;
+  
+}
