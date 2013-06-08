@@ -95,7 +95,7 @@ function theme_page_manager_lock($vars) {
   $lock_age = format_interval(REQUEST_TIME - $page->locked->updated);
   $break    = url(page_manager_edit_url($page->task_name, array('actions', 'break-lock')));
 
-  ctools_add_css('ctools');
+  //ctools_add_css('ctools');
   $output = '<div class="ctools-locked">';
   $output .= t('This page is being edited by user !user, and is therefore locked from editing by others. This lock is !age old. Click here to <a href="!break">break this lock</a>.', array('!user' => $name, '!age' => $lock_age, '!break' => $break));
   $output .= '</div>';
@@ -109,7 +109,7 @@ function theme_page_manager_changed($vars) {
   $text = $vars['text'];
   $description = $vars['description'];
 
-  ctools_add_css('ctools');
+  //ctools_add_css('ctools');
   $output = '<div class="page-manager-changed" title="' . $description . '">';
   $output .= $text;
   $output .= '</div>';

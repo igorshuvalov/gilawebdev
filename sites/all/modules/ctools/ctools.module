@@ -420,7 +420,7 @@ function ctools_class_remove($classes, $hook = 'html') {
  * Implement hook_init to keep our global CSS at the ready.
  */
 function ctools_init() {
-  ctools_add_css('ctools');
+  //ctools_add_css('ctools');
   // If we are sure that CTools' AJAX is in use, change the error handling.
   if (!empty($_REQUEST['ctools_ajax'])) {
     ini_set('display_errors', 0);

@@ -952,7 +952,7 @@ function rate_rate_templates() {
  * Implements hook_init().
  */
 function rate_init() {
-  drupal_add_css(drupal_get_path('module', 'rate') . '/rate.css');
+  //drupal_add_css(drupal_get_path('module', 'rate') . '/rate.css');
 }
 
 /**

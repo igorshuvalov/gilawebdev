@@ -5,7 +5,7 @@ core = 7.x
 php = 5.2
 
 ; Always available CSS
-stylesheets[all][] = css/views.css
+; stylesheets[all][] = css/views.css
 
 dependencies[] = ctools
 ; Handlers
