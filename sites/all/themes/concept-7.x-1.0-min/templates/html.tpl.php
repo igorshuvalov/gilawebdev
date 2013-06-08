@@ -1,3 +1,4 @@
+<?php ob_start(); ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="<?php print $language->language; ?>"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="<?php print $language->language; ?>"> <![endif]-->
@@ -23,3 +24,14 @@
   <?php print $cond_scripts_bottom; ?>
 </body>
 </html>
+<?php
+  $page = ob_get_clean();
+  $output = str_replace(array("\r\n", "\r"), "\n", $page);
+  $lines = explode("\n", $output);
+  $new_lines = array();
+  foreach ($lines as $i => $line) {
+    if(!empty($line))
+        $new_lines[] = trim($line);
+  }
+  print implode($new_lines);
+?>
