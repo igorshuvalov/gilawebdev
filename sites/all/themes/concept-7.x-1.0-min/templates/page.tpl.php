@@ -224,3 +224,5 @@ if ( !empty($page['raw_top']) ||
 <?php endif; ?>
 
 </div>
+
+<a style="display:none;" href="<?php echo url('blackhole/'); ?>" rel="nofollow">Do NOT follow this link or you will be banned from the site!</a>

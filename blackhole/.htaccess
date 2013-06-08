@@ -1,0 +1,8 @@
+# DISABLE DIRECTORY BROWSING
+Options All -Indexes
+
+# SECURE HTACCESS
+<Files .htaccess>
+ Order allow,deny
+ Deny from all
+</Files>
