@@ -532,7 +532,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
   
   $form['guideline'] = array(
     '#type'   => 'markup',
-    '#markup' => '<p>Silahkan membaca panduan <strong><a href="' . url('guidelines') . '">posting dan tagging sebelum</a></strong></p>',
+    '#markup' => '<p>Silahkan membaca <strong><a href="' . url('guidelines') . '">panduan posting dan tagging</a></strong> sebelum mem-post.</p>',
   );
   
   $form['title'] = array(
