@@ -4,6 +4,7 @@
  */
 function drupalgap_entity_add_core_fields_to_form(entity_type, bundle_name, form, entity) {
   try {
+    console.log('entity_type:' + entity_type);
     if (drupalgap.settings.debug) {
       console.log('drupalgap_entity_add_core_fields_to_form');
     }
@@ -177,12 +178,12 @@ function drupalgap_entity_get_core_fields(entity_type) {
             'required':true,
             'default_value':'',
           },
-          'subject':{
+          /*'subject':{
             'type':'textfield',
             'title':'Subject',
             'required':false,
             'default_value':'',
-          },
+          },*/
         };
         break;
       case 'node':

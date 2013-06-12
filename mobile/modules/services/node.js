@@ -33,10 +33,25 @@ drupalgap.services.node = {
         //drupalgap.node = node;
         // TODO - a good opportunity for a hook to come in
         // and modify node.content if developer wants.
-        node.content = '';
-        if (node.body.length != 0) {
-          node.content = node.body[node.language][0].safe_value;
-        }
+        switch(node.type) {
+          case 'deal':
+            node.content = '';
+            var deal = node.deal;
+            node.content = deal.description.replace('\r\n', '<BR>');
+            break;
+          case 'forum':
+            node.content = '';
+            if (node.body.length != 0) {
+              node.content = node.body[node.language][0].safe_value;
+            }
+            break;
+          default:
+            node.content = '';
+            if (node.body.length != 0) {
+              node.content = node.body[node.language][0].safe_value;
+            }
+            break;
+        }        
       },
     },
     'call':function(options){

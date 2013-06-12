@@ -7,7 +7,7 @@ drupalgap.settings = {
   'site_path':'http://gilawebdev.devcloud.acquia-sites.com', /* e.g. http://www.example.com */
   'base_path':'/',
   'default_services_endpoint':'drupalgap',
-  'clean_urls':false, /* set to true if you have clean urls enabled on your site */
+  'clean_urls':true, /* set to true if you have clean urls enabled on your site */
   
   /* App Information */
   'title':'DrupalGap',

@@ -576,9 +576,14 @@ function drupalgap_item_list_populate(list_css_selector, items) {
     // attempted to call method 'destroy' - we get this bug when drupalgap_goto()
     // reloads the same page after a form submission, and that page has an
     // item list that is populated.
-    $(list_css_selector).listview("destroy").listview();
+    try {
+      $(list_css_selector).listview("destroy");
+    }
+    catch (error) {}
+    $(list_css_selector).listview();
   }
   catch (error) {
+    $(list_css_selector).listview();
     alert('drupalgap_item_list_populate - ' + error);
   }
 }
