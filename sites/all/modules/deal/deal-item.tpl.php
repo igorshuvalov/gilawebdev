@@ -13,7 +13,7 @@
         'title' => $item->title,
       );
 
-      echo '<a href="' . url($item->alias) . '">' . theme('image_style', $image_item) . '</a>';
+      echo '<a href="' . url('node/' . $node->nid) . '">' . theme('image_style', $image_item) . '</a>';
       
     else: 
       
@@ -48,7 +48,7 @@
     </h2>
     <small>
       <?php 
-        echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . ', <a href="' . url($item->alias) . '#comments">' . $node->comment_count . ' comment(s)</a>';
+        echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . ', <a href="' . url('node/' . $node->nid) . '#comments">' . $node->comment_count . ' comment(s)</a>';
       ?>
     </small>
 	
@@ -60,7 +60,7 @@
       }
       else {
         $sub_desc = substr($desc, 0, 150);
-        echo substr($sub_desc, 0, strrpos($sub_desc, ' ')) . '... ' . '<a href="' . url($item->alias) . '">' . t('Read More') . '</a>';
+        echo substr($sub_desc, 0, strrpos($sub_desc, ' ')) . '... ' . '<a href="' . url('node/' . $node->nid) . '">' . t('Read More') . '</a>';
       }
     ?>
     </p>
