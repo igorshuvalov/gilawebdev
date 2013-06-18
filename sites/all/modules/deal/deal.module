@@ -680,16 +680,11 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
  */
 function deal_info_validate($form, &$form_state) {
   
-  $form_state['values']['deal_url'] = str_replace('http://', '', $form_state['values']['deal_url']);
-  $form_state['values']['deal_url'] = str_replace('https://', '', $form_state['values']['deal_url']);
-  $form_state['values']['deal_url'] = str_replace('www.', '', $form_state['values']['deal_url']);
+  $deal_url = str_replace('http://', '', $form_state['values']['deal_url']);
+  $deal_url = str_replace('https://', '', $deal_url);
+  $deal_url = str_replace('www.', '', $deal_url);
   
-  if (!(strpos($form_state['values']['deal_url'], 'http://') === 0 || strpos($form_state['values']['deal_url'], 'https://') === 0)) {
-    $deal_domain = @parse_url('http://' . $form_state['values']['deal_url'], PHP_URL_HOST);
-  }
-  else {
-    $deal_domain = @parse_url($form_state['values']['deal_url'], PHP_URL_HOST);
-  }
+  $deal_domain = @parse_url('http://' . $deal_url, PHP_URL_HOST);
   $alias = 'deals/' . $deal_domain . '/' . deal_url_encode($form_state['values']['title']);
   
   if (@$form_state['values']['did']) {
@@ -791,16 +786,11 @@ function deal_info_presave($form, &$form_state, $deal = NULL) {
     $form_state['values']['photo'] = 0;
   }
   
-  $form_state['values']['deal_url'] = str_replace('http://', '', $form_state['values']['deal_url']);
-  $form_state['values']['deal_url'] = str_replace('https://', '', $form_state['values']['deal_url']);
-  $form_state['values']['deal_url'] = str_replace('www.', '', $form_state['values']['deal_url']);
+  $deal_url = str_replace('http://', '', $form_state['values']['deal_url']);
+  $deal_url = str_replace('https://', '', $deal_url);
+  $deal_url = str_replace('www.', '', $deal_url);
   
-  if (!(strpos($form_state['values']['deal_url'], 'http://') === 0 || strpos($form_state['values']['deal_url'], 'https://') === 0)) {
-    $deal_domain = @parse_url('http://' . $form_state['values']['deal_url'], PHP_URL_HOST);
-  }
-  else {
-    $deal_domain = @parse_url($form_state['values']['deal_url'], PHP_URL_HOST);
-  }
+  $deal_domain = @parse_url('http://' . $deal_url, PHP_URL_HOST);
   $alias = 'deals/' . $deal_domain . '/' . deal_url_encode($form_state['values']['title']);
   $form_state['values']['alias'] = $alias;
   
@@ -876,14 +866,8 @@ function deal_edit_submit($form, &$form_state) {
   
   $node->title = $variables['title'];
   $node->status = $variables['disabled'] ? 0 : 1;
+  $node->path = array('alias' => $variables['alias']);
   node_save($node);
-  
-  db_update('{url_alias}')
-    ->fields(array(
-      'alias' => $variables['alias']
-    ))
-    ->condition('source', 'node/' . $deal->dnid)
-    ->execute();
   
   db_update('{deal}')
     ->fields(array(

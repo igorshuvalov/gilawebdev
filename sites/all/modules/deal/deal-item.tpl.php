@@ -16,10 +16,13 @@
       echo '<a href="' . url($item->alias) . '">' . theme('image_style', $image_item) . '</a>';
       
     else: 
-    
+      
+      if (substr($item->deal_url, 0, 7) != 'http://' && substr($item->deal_url, 0, 8) != 'https://') {
+        $item->deal_url = 'http://' . $item->deal_url;
+      }
       $options = array(
-        'url' => 'http://' . $item->deal_url,
-        'link' => $item->alias,
+        'url' => $item->deal_url,
+        'link' => 'node/' . $node->nid,
         'size' => 's',
         'image_options' => array(
         ),
@@ -36,7 +39,7 @@
     endif; 
     ?>
     <h2>
-      <a href="<?php echo url($item->alias);?>">
+      <a href="<?php echo url('node/' . $node->nid);?>">
         <?php echo $item->title ?>
       </a>
       <?php if (time() > $item->date_expiry): ?>

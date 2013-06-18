@@ -1,6 +1,9 @@
 <?php 
   global $user; 
   $node = node_load($item->dnid);
+  if (substr($item->deal_url, 0, 7) != 'http://' && substr($item->deal_url, 0, 8) != 'https://') {
+    $item->deal_url = 'http://' . $item->deal_url;
+  }
 ?>
 <div class="deal-page">
   <div class="deal-content">
@@ -26,8 +29,8 @@
       else: 
 
         $options = array(
-          'url' => 'http://' . $item->deal_url,
-          'link' => 'http://' . $item->deal_url,
+          'url' => $item->deal_url,
+          'link' => $item->deal_url,
           'size' => 's',
           'image_options' => array(
           ),
@@ -52,7 +55,7 @@
           echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted);
         ?>
       </small>
-      <div class="deal-url"><strong>URL:</strong> <a href="http://<?php echo $item->deal_url; ?>" target="_blank">http://<?php echo $item->deal_url; ?></a></div>
+      <div class="deal-url"><strong>URL:</strong> <a href="<?php echo $item->deal_url; ?>" target="_blank"><?php echo $item->deal_url; ?></a></div>
 
       <?php if ($item->coupon_code): ?>
         <div class="section-coupon-code">
