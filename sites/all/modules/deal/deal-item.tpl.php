@@ -13,12 +13,12 @@
         'title' => $item->title,
       );
 
-      echo '<a href="' . file_create_url($photo->uri) . '" target="_blank">' . theme('image_style', $image_item) . '</a>';
+      echo '<a href="' . url($item->alias) . '">' . theme('image_style', $image_item) . '</a>';
       
     else: 
     
       $options = array(
-        'url' => 'http://www.' . $item->deal_url,
+        'url' => 'http://' . $item->deal_url,
         'link' => $item->alias,
         'size' => 's',
         'image_options' => array(

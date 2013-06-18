@@ -38,15 +38,6 @@ function drupalgap_form_render(form) {
     $.each(form.elements, function(name, element){
         // Open the element.
         form_element = '';
-        if (element.type != 'hidden') {
-          form_element += '<div>';
-        }
-        // Add a label to all fields, except submit.
-        if (element.type != 'submit' && element.type != 'hidden') {
-          form_element += '<label for="' + name + '"><strong>' + element.title + '</strong>';
-          if (element.required) { form_element += '*'; }
-          form_element += '</label>';
-        }
         // If there wasn't a default value provided, set one.
         if (!element.default_value) {
           element.default_value = '';
@@ -56,9 +47,20 @@ function drupalgap_form_render(form) {
         // Depending on the element type, render the field.
         switch (element.type) {
           case "email":
+            form_element += '<div>';
+            form_element += '<label for="' + name + '"><strong>' + element.title + '</strong></label>';
+            if (element.required) { form_element += '*'; }
             form_element += '<input type="email" id="' + element_id + '" value="' + element.default_value + '"/>';
+            form_element += '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
             break;
           case 'image':
+            form_element += '<div>';
+            if (element.title) {
+              form_element += '<label for="' + name + '"><strong>' + element.title + '</strong></label>';
+            }            
+            if (element.required) { form_element += '*'; }
             // Set the default button text, and if a value was provided,
             // overwrite the button text.
             var button_text = 'Add Image';
@@ -114,15 +116,25 @@ function drupalgap_form_render(form) {
             '});';
             // Close extra javascript declaration.
             form_element += '</script>';
+            form_element += '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
             console.log(form_element);
             break;
           case "hidden":
             form_element += '<input type="hidden" id="' + element_id + '" value="' + element.default_value + '"/>';
             break;
           case "password":
+            form_element += '<div>';
+            form_element += '<label for="' + name + '"><strong>' + element.title + '</strong></label>';
+            if (element.required) { form_element += '*'; }
             form_element += '<input type="password" id="' + element_id + '" value="' + element.default_value + '"/>';
+            form_element += '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
             break;
           case "submit":
+            form_element += '<div>';
             var submit_attributes = {
               'type':'button',
               'data-theme':'b',
@@ -131,31 +143,150 @@ function drupalgap_form_render(form) {
             };
             //form_element += '<button type="button" data-theme="b" id="' + element_id + '" class="drupalgap_form_submit" form_id="' + form.id + '">' + element.value + '</button>';
             form_element += '<button ' + drupalgap_attributes(submit_attributes) + '>' + element.value + '</button>';
+            form_element += '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
             break;
           case "textfield":
+            form_element += '<div>';
+            form_element += '<label for="' + name + '"><strong>' + element.title + '</strong></label>';
+            if (element.required) { form_element += '*'; }
             form_element += '<input type="text" id="' + element_id + '" value="' + element.default_value + '"/>';
+            form_element += '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
+            break;
+          case "checkbox":
+            form_element += '<div>';
+            form_element += '<label><input type="checkbox" id="' + element_id + '" name="' + element_id + '" ';
+            if (element.default_value == 1) { form_element += 'checked'; }
+            form_element += '/>' + element.title;
+            if (element.required) { form_element += '*'; }
+            form_element += '</label>';
+            form_element += '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
             break;
           case 'textarea':
           case 'text_long':
           case "text_with_summary":
           case 'text_textarea':
+            form_element += '<div>';
+            form_element += '<label for="' + name + '"><strong>' + element.title + '</strong></label>';
+            if (element.required) { form_element += '*'; }
             form_element += '<textarea type="text" id="' + element_id + '">' + element.default_value + '</textarea>';
+            form_element += '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
             break;
           /*case "image":
             break;
           case "taxonomy_term_reference":
             break;*/
+          case 'fieldset_start':
+            form_element += '<div>';
+            form_element += '<div data-role="fieldcontain"><fieldset data-role="controlgroup"><legend>' + element.title;
+            if (element.required) { form_element += '*'; }
+            form_element += ':</legend>';
+            break;
+          case 'fieldset_end':
+            form_element += '</fieldset></div>';
+            form_element += '</div><div>&nbsp;</div>';
+            break;
+          case 'markup':
+            form_element += '<div>' + element.markup + '</div>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '<div>&nbsp;</div>';
+            break;
+          case 'date':
+            if (element.default_value != 0) {
+              var date = new Date(element.default_value * 1000);
+            }
+            else {
+              var date = new Date();
+            }
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            form_element += '<div><label><strong>' + element.title + '</strong>' + (element.required ? '*' : '') + '</label><fieldset data-role="controlgroup" data-type="horizontal">';
+            form_element += '<select name="' + element_id + '-month" id="' + element_id + '-month">';
+            form_element += '<option value="1"' + (month == 1 ? ' selected' : '') + '>January</option>';
+            form_element += '<option value="2"' + (month == 2 ? ' selected' : '') + '>February</option>';
+            form_element += '<option value="3"' + (month == 3 ? ' selected' : '') + '>March</option>';
+            form_element += '<option value="4"' + (month == 4 ? ' selected' : '') + '>April</option>';
+            form_element += '<option value="5"' + (month == 5 ? ' selected' : '') + '>May</option>';
+            form_element += '<option value="6"' + (month == 6 ? ' selected' : '') + '>June</option>';
+            form_element += '<option value="7"' + (month == 7 ? ' selected' : '') + '>July</option>';
+            form_element += '<option value="8"' + (month == 8 ? ' selected' : '') + '>August</option>';
+            form_element += '<option value="9"' + (month == 9 ? ' selected' : '') + '>September</option>';
+            form_element += '<option value="10"' + (month == 10 ? ' selected' : '') + '>October</option>';
+            form_element += '<option value="11"' + (month == 11 ? ' selected' : '') + '>November</option>';
+            form_element += '<option value="12"' + (month == 12 ? ' selected' : '') + '>December</option>';
+            form_element += '</select>';
+            form_element += '<select name="' + element_id + '-day" id="' + element_id + '-day">';
+            form_element += '<option value="1"' + (day == 1 ? ' selected' : '') + '>1</option>';
+            form_element += '<option value="2"' + (day == 2 ? ' selected' : '') + '>2</option>';
+            form_element += '<option value="3"' + (day == 3 ? ' selected' : '') + '>3</option>';
+            form_element += '<option value="4"' + (day == 4 ? ' selected' : '') + '>4</option>';
+            form_element += '<option value="5"' + (day == 5 ? ' selected' : '') + '>5</option>';
+            form_element += '<option value="6"' + (day == 6 ? ' selected' : '') + '>6</option>';
+            form_element += '<option value="7"' + (day == 7 ? ' selected' : '') + '>7</option>';
+            form_element += '<option value="8"' + (day == 8 ? ' selected' : '') + '>8</option>';
+            form_element += '<option value="9"' + (day == 9 ? ' selected' : '') + '>9</option>';
+            form_element += '<option value="10"' + (day == 10 ? ' selected' : '') + '>10</option>';
+            form_element += '<option value="11"' + (day == 11 ? ' selected' : '') + '>11</option>';
+            form_element += '<option value="12"' + (day == 12 ? ' selected' : '') + '>12</option>';
+            form_element += '<option value="13"' + (day == 13 ? ' selected' : '') + '>13</option>';
+            form_element += '<option value="14"' + (day == 14 ? ' selected' : '') + '>14</option>';
+            form_element += '<option value="15"' + (day == 15 ? ' selected' : '') + '>15</option>';
+            form_element += '<option value="16"' + (day == 16 ? ' selected' : '') + '>16</option>';
+            form_element += '<option value="17"' + (day == 17 ? ' selected' : '') + '>17</option>';
+            form_element += '<option value="18"' + (day == 18 ? ' selected' : '') + '>18</option>';
+            form_element += '<option value="19"' + (day == 19 ? ' selected' : '') + '>19</option>';
+            form_element += '<option value="20"' + (day == 20 ? ' selected' : '') + '>20</option>';
+            form_element += '<option value="21"' + (day == 21 ? ' selected' : '') + '>21</option>';
+            form_element += '<option value="22"' + (day == 22 ? ' selected' : '') + '>22</option>';
+            form_element += '<option value="23"' + (day == 23 ? ' selected' : '') + '>23</option>';
+            form_element += '<option value="24"' + (day == 24 ? ' selected' : '') + '>24</option>';
+            form_element += '<option value="25"' + (day == 25 ? ' selected' : '') + '>25</option>';
+            form_element += '<option value="26"' + (day == 26 ? ' selected' : '') + '>26</option>';
+            form_element += '<option value="27"' + (day == 27 ? ' selected' : '') + '>27</option>';
+            form_element += '<option value="28"' + (day == 28 ? ' selected' : '') + '>28</option>';
+            form_element += '<option value="29"' + (day == 29 ? ' selected' : '') + '>29</option>';
+            form_element += '<option value="30"' + (day == 30 ? ' selected' : '') + '>30</option>';
+            form_element += '<option value="31"' + (day == 11 ? ' selected' : '') + '>31</option>';
+            form_element += '</select>';
+            form_element += '<select name="' + element_id + '-year" id="' + element_id + '-year">';
+            form_element += '<option value="2013"' + (year == 2013 ? ' selected' : '') + '>2013</option>';
+            form_element += '<option value="2014"' + (year == 2014 ? ' selected' : '') + '>2014</option>';
+            form_element += '<option value="2015"' + (year == 2015 ? ' selected' : '') + '>2015</option>';
+            form_element += '<option value="2016"' + (year == 2016 ? ' selected' : '') + '>2016</option>';
+            form_element += '<option value="2017"' + (year == 2017 ? ' selected' : '') + '>2017</option>';
+            form_element += '<option value="2018"' + (year == 2018 ? ' selected' : '') + '>2018</option>';
+            form_element += '<option value="2019"' + (year == 2019 ? ' selected' : '') + '>2019</option>';
+            form_element += '<option value="2020"' + (year == 2020 ? ' selected' : '') + '>2020</option>';
+            form_element += '<option value="2021"' + (year == 2021 ? ' selected' : '') + '>2021</option>';
+            form_element += '<option value="2022"' + (year == 2022 ? ' selected' : '') + '>2022</option>';
+            form_element += '</select>';
+            form_element += '</fieldset>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '</div><div>&nbsp;</div>';
+            break;
+          case 'select':
+            form_element += '<div>';
+            form_element += '<label for="' + name + '"><strong>' + element.title + '</strong>' + (element.required ? '*' : '') + '</label>';
+            form_element += '<select id="' + element_id + '">';
+            $.each(element.options, function(i) {
+              form_element += '<option value="' + this.id + '"' + (element.default_value == this.id ? ' selected' : '') + '>' + this.name + '</option>';
+            });
+            form_element += '</select>';
+            if (element.description) { form_element += '<div><small>' + element.description + '</small></div>'; }
+            form_element += '</div><div>&nbsp;</div>';
+            break;
           default:
             form_element += '<div><em>Field ' + element.type + ' not supported, yet.</em></div>';
+            form_element += '</div><div>&nbsp;</div>';
             break;
-        }
-        // Added element description.
-        if (element.description && element.type != 'hidden') {
-          form_element += '<div>' + element.description + '</div>';
-        }
-        // Close element and add to form elements.
-        if (element.type != 'hidden') {
-          form_element += '</div><div>&nbsp;</div>';
         }
         form_elements += form_element;
     });

@@ -90,7 +90,8 @@ function drupalgap_views_default_views() {
 
   // Add view to list of views to provide.
   $views[$view->name] = $view;
-
+  
+  // View for comments
   $view = new view();
   $view->name = 'drupalgap_comments';
   $view->description = 'A DrupalGap JSON view used to retrieve a comments.';

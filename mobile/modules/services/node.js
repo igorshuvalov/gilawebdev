@@ -37,7 +37,7 @@ drupalgap.services.node = {
           case 'deal':
             node.content = '';
             var deal = node.deal;
-            node.content = deal.description.replace('\r\n', '<BR>');
+            node.content = deal.description.replace(/([/\r/\n])/g, '<BR>');
             break;
           case 'forum':
             node.content = '';
@@ -51,7 +51,7 @@ drupalgap.services.node = {
               node.content = node.body[node.language][0].safe_value;
             }
             break;
-        }        
+        }
       },
     },
     'call':function(options){

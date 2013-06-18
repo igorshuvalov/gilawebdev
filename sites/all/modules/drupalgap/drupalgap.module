@@ -114,6 +114,38 @@ function drupalgap_default_services_endpoint() {
     ),
   );
   $endpoint->resources = array(
+    'drupalgap_deal' => array(
+      'actions' => array(
+        'today_best' => array(
+          'enabled' => '1',
+        ),
+        'new' => array(
+          'enabled' => '1',
+        ),
+        'popular' => array(
+          'enabled' => '1',
+        ),
+        'category_items' => array(
+          'enabled' => '1',
+        ),
+        'location_items' => array(
+          'enabled' => '1',
+        ),
+        'category' => array(
+          'enabled' => '1',
+        ),
+        'location' => array(
+          'enabled' => '1',
+        ),
+      ),
+    ),
+    'drupalgap_forum' => array(
+      'actions' => array(
+        'retrieve' => array(
+          'enabled' => '1',
+        ),
+      ),
+    ),
     'drupalgap_content' => array(
       'actions' => array(
         'content_types_list' => array(
@@ -308,6 +340,9 @@ function drupalgap_default_services_endpoint() {
           'enabled' => '1',
         ),
       ),
+    ),
+    'deal' => array(
+      ''
     ),
   );
   $endpoint->debug = 0;

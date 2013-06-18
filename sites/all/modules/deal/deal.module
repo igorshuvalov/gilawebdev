@@ -636,7 +636,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
   $form['location'] = array(
     '#type'           => 'select',
     '#title'          => t('Deal Location'),
-    '#description'    => t('Please select the best matching Deal Location'),
+    '#description'    => t('Please select the best matching Deal Location.'),
     '#options'        => deal_locations(),
     '#required'       => TRUE,
     '#default_value'  => $deal ? $deal->location : '',
@@ -679,6 +679,10 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
  * @see deal_info_form()
  */
 function deal_info_validate($form, &$form_state) {
+  
+  $form_state['values']['deal_url'] = str_replace('http://', '', $form_state['values']['deal_url']);
+  $form_state['values']['deal_url'] = str_replace('https://', '', $form_state['values']['deal_url']);
+  $form_state['values']['deal_url'] = str_replace('www.', '', $form_state['values']['deal_url']);
   
   if (!(strpos($form_state['values']['deal_url'], 'http://') === 0 || strpos($form_state['values']['deal_url'], 'https://') === 0)) {
     $deal_domain = @parse_url('http://' . $form_state['values']['deal_url'], PHP_URL_HOST);
@@ -787,6 +791,10 @@ function deal_info_presave($form, &$form_state, $deal = NULL) {
     $form_state['values']['photo'] = 0;
   }
   
+  $form_state['values']['deal_url'] = str_replace('http://', '', $form_state['values']['deal_url']);
+  $form_state['values']['deal_url'] = str_replace('https://', '', $form_state['values']['deal_url']);
+  $form_state['values']['deal_url'] = str_replace('www.', '', $form_state['values']['deal_url']);
+  
   if (!(strpos($form_state['values']['deal_url'], 'http://') === 0 || strpos($form_state['values']['deal_url'], 'https://') === 0)) {
     $deal_domain = @parse_url('http://' . $form_state['values']['deal_url'], PHP_URL_HOST);
   }
@@ -831,10 +839,6 @@ function deal_info_presave($form, &$form_state, $deal = NULL) {
       }
     }
   }
-  
-  $form_state['values']['deal_url'] = str_replace('http://', '', $form_state['values']['deal_url']);
-  $form_state['values']['deal_url'] = str_replace('https://', '', $form_state['values']['deal_url']);
-  $form_state['values']['deal_url'] = str_replace('www.', '', $form_state['values']['deal_url']);
   
   $tags_array = explode(',', $form_state['values']['tags']);
   $new_tags = array();
@@ -992,6 +996,10 @@ function deal_load($nodes) {
       if (!$deal) {
         return;
       }
+      if ($deal->photo) {
+        $photo = file_load($deal->photo);
+        $deal->photo_image = theme('image', array('path' => $photo->uri, 'alt' => $deal->title, 'title' => $deal->title, 'width' => '50'));
+      }
         
       $nodes[$node->nid]->deal = $deal;
     }
@@ -1007,6 +1015,11 @@ function deal_load($nodes) {
       ->fields('ua')
       ->execute()
       ->fetchObject();
+      
+    if ($deal->photo) {
+      $photo = file_load($deal->photo);
+      $deal->photo_image = theme('image', array('path' => $photo->uri, 'alt' => $deal->title, 'title' => $deal->title, 'width' => '50'));
+    }
     
     return $deal;
   }
@@ -1089,6 +1102,7 @@ function deal_locations() {
   
   return array(
     1 => 'Online Only',
+    21 => 'Seluruh Indonesia',
     2 => 'Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi)',
     3 => 'Surabaya',
     4 => 'Bandung',
@@ -1107,8 +1121,7 @@ function deal_locations() {
     17 => 'Padang',
     18 => 'Papua',
     19 => 'Papua Barat',
-    20 => 'Madura',
-    21 => 'Seluruh Indonesia',
+    20 => 'Madura',    
     22 => 'Batam',
     23 => 'Bali',
   );

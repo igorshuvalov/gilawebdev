@@ -98,23 +98,105 @@ function node_edit(node) {
     // Add the fields for this content type to the form.
     drupalgap_field_info_instances_add_to_form('node', node.type, form, node);
     
+    if (node.type == 'deal') {
+      var deal = node.deal;
+      
+      form.elements.deal_url = {
+        'type':'textfield',
+        'title':'Deal URL',
+        'required':true,
+        'default_value':deal.deal_url,
+        'description':'Please enter the Website (URL) to access the Deal.',
+      };
+      form.elements.photo = {
+        'type':'markup',
+        'markup':'<label><strong>Deal Photo</strong>*</label>',
+      };
+      form.elements.photo_automatic = {
+        'type':'checkbox',
+        'title':'Option 1 - Make Automated Screenshot of Deal URL (Default)',
+        'default_value':(deal.photo == 0 ? 1 : 0),
+      };
+      if (deal.photo_image != 0) {
+        form.elements.photo_image = {
+          'type':'markup',
+          'markup':deal.photo_image,
+        };
+      }
+      form.elements.photo_upload = {
+        'type':'image',
+        'value':'Option 2 - Upload Deal Photo',
+        'description':'Upload an image (JPEG, PNG or GIF) under 500Kb.',
+      };
+      form.elements.coupon_code = {
+        'type':'textfield',
+        'title':'Coupon Code',
+        'description':'If Coupon Code applies to the Deal, please enter the Coupon Code.',
+        'default_value':deal.coupon_code,
+      };
+      form.elements.description = {
+        'type':'textarea',
+        'title':'Deal Description',
+        'description':'Please enter a short Deal Description.',
+        'required':true,
+        'default_value':deal.description,
+      };
+      form.elements.representative = {
+        'type':'checkbox',
+        'title':'Store Representative',
+        'description':'If you are a Store Representative, as defined in the Posting Guidelines, you must check this box.',
+        'default_value':(deal.representative ? deal.representative : 0),
+      };
+      form.elements.date_start = {
+        'type':'date',
+        'title':'Deal Start Date',
+        'description':'If the Deal starts on a specific date, please specify the Start Date. Format is YYYY-MM-DD.',
+        'required':true,
+        'default_value':deal.date_start,
+      };
+      form.elements.date_expiry = {
+        'type':'date',
+        'title':'Deal Expiry Date',
+        'description':'If the Deal ends on a specific date, please specify the End Date. If you have entered a Start Date, the End Date must be after the Start Date. Format is YYYY-MM-DD.',
+        'required':true,
+        'default_value':deal.date_expiry,
+      };
+      form.elements.category = {
+        'type':'select',
+        'title':'Deal Category',
+        'description':'Please select the best matching Deal Category.',
+        'options':_deal_categories(),
+        'required':true,
+        'default_value':deal.category,
+      };
+      form.elements.location = {
+        'type':'select',
+        'title':'Deal Location',
+        'description':'Please select the best matching Deal Location.',
+        'options':_deal_locations(),
+        'required':true,
+        'default_value':deal.location,
+      };
+      form.elements.tags = {
+        'type':'textfield',
+        'title':'Deal Tags',
+        'description':'Please enter tags to describe the Deal. Only alphanumeric characters and spaces (to separate multi-word tags) are permitted. Each tag must be separated by a comma.',
+        'required':true,
+        'default_value':deal.tags,
+      };
+      form.elements.disabled = {
+        'type':'checkbox',
+        'title':'Status',
+        'description':'Check if this deal is disabled.',
+        'default_value':deal.disabled,
+      };
+    }
+    
     // Add submit to form.
     form.elements.submit = {
       'type':'submit',
       'value':'Save',
     };
-    
-    // Add cancel button to form.
-    form.buttons['cancel'] = {
-      'title':'Cancel',
-    };
-    
-    // Add delete button to form if we're editing a node.
-    if (node && node.nid) {
-      form.buttons['delete'] = {
-        'title':'Delete',
-      };
-    }
     
     return form;
   }
@@ -393,3 +475,67 @@ function node_theme() {
   }
 }
 
+/**
+* Get category list for deal
+* 
+*/
+function _deal_categories() {
+  return [
+    {'id':1, 'name':'Accessories'},
+    {'id':2, 'name':'Automotive'},
+    {'id':3, 'name':'Baby'},
+    {'id':4, 'name':'Beauty'},
+    {'id':5, 'name':'Books'},
+    {'id':6, 'name':'Clothing'},
+    {'id':7, 'name':'Electronics'},
+    {'id':8, 'name':'Flowers'},
+    {'id':9, 'name':'Food'},
+    {'id':10, 'name':'Furniture'},
+    {'id':11, 'name':'Gifts'},
+    {'id':12, 'name':'Health'},
+    {'id':13, 'name':'Home & Garden'},
+    {'id':14, 'name':'Jewellery'},
+    {'id':15, 'name':'Musical Instruments'},
+    {'id':16, 'name':'Office Supplies'},
+    {'id':17, 'name':'Party Supplies'},
+    {'id':18, 'name':'Pets'},
+    {'id':19, 'name':'Photography'},
+    {'id':20, 'name':'Services'},
+    {'id':21, 'name':'Shoes'},
+    {'id':22, 'name':'Sporting Goods'},
+    {'id':23, 'name':'Toys'},
+    {'id':24, 'name':'Travel'}
+  ];
+}
+
+/**
+* Get location list for deal
+* 
+*/
+function _deal_locations() {
+  return [
+    {'id':1, 'name':'Online Only'},
+    {'id':2, 'name':'Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi)'},
+    {'id':3, 'name':'Surabaya'},
+    {'id':4, 'name':'Bandung'},
+    {'id':5, 'name':'Medan'},
+    {'id':6, 'name':'Semarang'},
+    {'id':7, 'name':'Yogyakarta'},
+    {'id':8, 'name':'Palembang'},
+    {'id':9, 'name':'Bandar Lampung'},
+    {'id':10, 'name':'Banjarmasin'},
+    {'id':11, 'name':'Pontianak'},
+    {'id':12, 'name':'Balikpapan'},
+    {'id':13, 'name':'Makassar'},
+    {'id':14, 'name':'Ambon'},
+    {'id':15, 'name':'Manado'},
+    {'id':16, 'name':'Jambi'},
+    {'id':17, 'name':'Padang'},
+    {'id':18, 'name':'Papua'},
+    {'id':19, 'name':'Papua Barat'},
+    {'id':20, 'name':'Madura'},
+    {'id':21, 'name':'Seluruh Indonesia'},
+    {'id':22, 'name':'Batam'},
+    {'id':23, 'name':'Bali'}
+  ];
+}

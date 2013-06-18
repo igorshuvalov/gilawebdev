@@ -9,6 +9,7 @@ var drupalgap = {
        {'name':'field'},
        {'name':'form'},
        {'name':'menu'},
+       {'name':'deal'},
        {'name':'node'},
        {'name':'services',
          'includes':[
@@ -18,6 +19,7 @@ var drupalgap = {
            {'name':'drupalgap_taxonomy'},
            {'name':'drupalgap_user'},
            {'name':'file'},
+           {'name':'deal'},
            {'name':'node'},
            {'name':'services'},
            {'name':'system'},
@@ -835,6 +837,7 @@ function drupalgap_prepare_argument_entities(page_arguments, args) {
           (
             args[0] == 'comment' ||
             args[0] == 'node' ||
+            args[0] == 'deal' ||
             (args[0] == 'taxonomy' && (args[1] == 'vocabulary' || args[1] == 'term')) ||
             args[0] == 'user'
           )

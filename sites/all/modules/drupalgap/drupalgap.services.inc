@@ -11,6 +11,174 @@
   */
 function drupalgap_services_resources() {
   $drupalgap_resource = array(
+    'drupalgap_deal' => array(
+      'actions' => array(
+        'today_best' => array(
+          'help' => t("Gets a list of deal contens of today's best."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_today_best',
+          'args' => array(),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+        'new' => array(
+          'help' => t("Gets a list of new deal contens."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_new',
+          'args' => array(),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+        'popular' => array(
+          'help' => t("Gets a list of popular deal contens."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_popular',
+          'args' => array(),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+        'category_items' => array(
+          'help' => t("Gets a list of deal categories."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_category_items',
+          'args' => array(),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+        'location_items' => array(
+          'help' => t("Gets a list of deal locations."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_location_items',
+          'args' => array(),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+        'category' => array(
+          'help' => t("Gets a list of specified deal category."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_category',
+          'args' => array(
+            array(
+              'name' => 'id',
+              'type' => 'int',
+              'description' => 'The category id',
+              'source' => array('path' => '1'),
+              'optional' => FALSE,
+            ),
+          ),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+        'location' => array(
+          'help' => t("Gets a list of specified deal location."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_location',
+          'args' => array(
+            array(
+              'name' => 'id',
+              'type' => 'int',
+              'description' => 'The category id',
+              'source' => array('path' => '1'),
+              'optional' => FALSE,
+            ),
+          ),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+      ),
+    ),
+    'drupalgap_forum' => array(
+      'actions' => array(
+        'retrieve' => array(
+          'help' => t("Gets a list of forums."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_forum',
+          'args' => array(),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
+      ),
+    ),
     'drupalgap_content' => array(
       'actions' => array(
         'content_types_list' => array(

@@ -5,9 +5,10 @@
 */
 function deal_new_items($key = NULL) {
   
+  $ago_7days = strtotime('today') - 7 * 24 * 3600;
   $query = db_select('{deal}', 'd')
     ->condition('d.disabled', 0)
-    ->condition('d.date_posted', strtotime('today') - 7 * 24 * 3600, '>');
+    ->condition('d.date_posted', $ago_7days, '>');
   
   switch($key) {
     case 'noexpired':
@@ -1067,10 +1068,10 @@ function deal_live($action_type, $action_keys) {
       $created = $action->date_posted;
       $uid = $action->druid;
       if ($action->rate == 1) {
-        $action_name = 'vote up';
+        $action_name = '+1';
       }
       else if ($action->rate == -1) {
-        $action_name = 'vote down';
+        $action_name = '-1';
       }
       $deal = deal_load($action->droid);
       $title = '<a href="' . url('node/' . $deal->dnid) . '">' . $deal->title . '</a>';
@@ -1094,13 +1095,13 @@ function deal_live($action_type, $action_keys) {
     $user_info = user_load($uid);
     $user = l($user_info->name, 'user/' . $uid);
     
-    $output .= '<tr' . ($action_keys['timestamp'] < $created ? ' class="new"' : '') . '>';
-    $output .= '<td>' . $time . '</td>';
-    $output .= '<td>' . $user . '</td>';
-    $output .= '<td align="center">' . $action_name . '</td>';
-    $output .= '<td>' . $title . '</td>';
-    $output .= '<td>' . $type . '</td>';
-    $output .= '</tr>';
+    $output .= '<div class="live-item' . ($action_keys['timestamp'] < $created ? ' new' : '') . '">';
+    $output .= '<div class="live-column column-time">' . $time . '</div>';
+    $output .= '<div class="live-column column-user">' . $user . '</div>';
+    $output .= '<div class="live-column column-action">' . $action_name . '</div>';
+    $output .= '<div class="live-column column-subject">' . $title . '</div>';
+    $output .= '<div class="live-column column-type">' . $type . '</div>';
+    $output .= '</div>';
     
     if ($last_timestamp < $created)
       $last_timestamp = $created;

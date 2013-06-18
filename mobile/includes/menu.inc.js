@@ -151,7 +151,10 @@ function menu_list_system_menus() {
       'user_menu_authenticated':{
         'title':'User menu authenticated'
       },
-      'main_menu':{
+      'main_menu_anonymous':{
+        'title':'Main menu'
+      },
+      'main_menu_authenticated':{
         'title':'Main menu'
       },
       'primary_local_tasks':{

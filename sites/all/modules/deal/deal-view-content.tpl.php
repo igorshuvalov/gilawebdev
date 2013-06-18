@@ -26,8 +26,8 @@
       else: 
 
         $options = array(
-          'url' => 'http://www.' . $item->deal_url,
-          'link' => 'http://www.' . $item->deal_url,
+          'url' => 'http://' . $item->deal_url,
+          'link' => 'http://' . $item->deal_url,
           'size' => 's',
           'image_options' => array(
           ),
@@ -52,7 +52,7 @@
           echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted);
         ?>
       </small>
-      <div class="deal-url"><strong>URL:</strong> <a href="http://www.<?php echo $item->deal_url; ?>" target="_blank">http://www.<?php echo $item->deal_url; ?></a></div>
+      <div class="deal-url"><strong>URL:</strong> <a href="http://<?php echo $item->deal_url; ?>" target="_blank">http://<?php echo $item->deal_url; ?></a></div>
 
       <?php if ($item->coupon_code): ?>
         <div class="section-coupon-code">

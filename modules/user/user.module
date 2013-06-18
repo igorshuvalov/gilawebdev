@@ -1316,13 +1316,13 @@ function user_login_block($form) {
   );
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array('#type' => 'submit',
-    '#value' => t('Log in'),
+    '#value' => t('Sign In'),
   );
   $items = array();
   if (variable_get('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)) {
-    $items[] = l(t('Create new account'), 'user/register', array('attributes' => array('title' => t('Create a new user account.'))));
+    $items[] = l(t('FREE - Sign Up Now'), 'user/register', array('attributes' => array('title' => t('Create a new user account.'))));
   }
-  $items[] = l(t('Request new password'), 'user/password', array('attributes' => array('title' => t('Request new password via e-mail.'))));
+  $items[] = l(t('Reset Password'), 'user/password', array('attributes' => array('title' => t('Request new password via e-mail.'))));
   $form['links'] = array('#markup' => theme('item_list', array('items' => $items)));
   return $form;
 }
@@ -1616,13 +1616,13 @@ function user_menu() {
   );
 
   $items['user/login'] = array(
-    'title' => 'Log in',
+    'title' => 'Sign In',
     'access callback' => 'user_is_anonymous',
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
 
   $items['user/register'] = array(
-    'title' => 'Create new account',
+    'title' => 'FREE - Sign Up Now',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('user_register_form'),
     'access callback' => 'user_register_access',
@@ -1630,7 +1630,7 @@ function user_menu() {
   );
 
   $items['user/password'] = array(
-    'title' => 'Request new password',
+    'title' => 'Reset Password',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('user_pass'),
     'access callback' => TRUE,
@@ -1638,7 +1638,7 @@ function user_menu() {
     'file' => 'user.pages.inc',
   );
   $items['user/reset/%/%/%'] = array(
-    'title' => 'Reset password',
+    'title' => 'Reset Password',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('user_pass_reset', 2, 3, 4),
     'access callback' => TRUE,
@@ -1647,7 +1647,7 @@ function user_menu() {
   );
 
   $items['user/logout'] = array(
-    'title' => 'Log out',
+    'title' => 'Sign Out',
     'access callback' => 'user_is_logged_in',
     'page callback' => 'user_logout',
     'weight' => 10,
@@ -3766,7 +3766,7 @@ function user_register_form($form, &$form_state) {
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Create new account'),
+    '#value' => t('Join Giladiskon!'),
   );
 
   $form['#validate'][] = 'user_register_validate';

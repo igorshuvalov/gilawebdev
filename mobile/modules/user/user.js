@@ -246,7 +246,7 @@ function user_register() {
       },
       'submit':{
         'type':'submit',
-        'value':'Create new account',
+        'value':'Join Giladiskon',
       },
     },
   };
