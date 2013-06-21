@@ -3,11 +3,11 @@ jQuery(document).ready(function() {
     moviePath: "/sites/all/modules/deal/ZeroClipboard/ZeroClipboard.swf"
   });
   clip.on('complete', function(client, args) {
-    window.open('http://' + jQuery('.coupon-code').attr('deal-url'), '_blank');
+    window.open(jQuery('.coupon-code').attr('deal-url'), '_blank');
   });
   clip.on('noFlash', function(client) {
     jQuery('.coupon-code').click(function() {
-      window.open('http://' + jQuery(this).attr('deal-url'), '_blank');
+      window.open(jQuery(this).attr('deal-url'), '_blank');
     });
 	 jQuery('.clicktocopy').hide();
   });

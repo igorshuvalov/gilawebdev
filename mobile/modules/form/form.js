@@ -336,7 +336,24 @@ function drupalgap_form_state_values_assemble(form) {
     var form_state = {'values':{}};
     $.each(form.elements, function(name, element) {
       if (name == 'submit') { return; } // Always skip the form 'submit'.
-      form_state.values[name] = $('#' + drupalgap_form_get_element_id(name, form.id)).val();
+      var element_id = drupalgap_form_get_element_id(name, form.id);
+      switch(element.type) {
+        case 'checkbox':
+          if ($('#' + element_id).prev().attr('data-icon') == 'checkbox-off') {
+            $('#' + element_id).removeAttr('checked');
+          }
+          else {
+            $('#' + element_id).attr('checked', true);
+          }
+          form_state.values[name] = $('#' + element_id).attr('checked') ? 'on' : null;
+          break;
+        case 'date':
+          form_state.values[name] = $('#' + element_id + '-year').val() + '-' + $('#' + element_id + '-month').val() + '-' + $('#' + element_id + '-day').val();
+          break;
+        default:
+          form_state.values[name] = $('#' + element_id).val();
+          break;
+      }      
     });
     // Attach the form state to drupalgap.form_states keyed by the form id.
     drupalgap.form_states[form.id] = form_state;
@@ -453,6 +470,7 @@ function _drupalgap_form_submit(form_id) {
     
     // Assemble the form state values.
     var form_state = drupalgap_form_state_values_assemble(form);
+    console.log(JSON.stringify(form_state));
     
     // Clear our previous form errors.
     drupalgap.form_errors = {};
@@ -483,12 +501,13 @@ function _drupalgap_form_submit(form_id) {
       $.each(drupalgap.form_errors, function(name, message){
           html += message + '\n\n';
       });
-      navigator.notification.alert(
+      /*navigator.notification.alert(
         html,
         function(){},
         'Warning',
         'OK'
-      );
+      );*/
+      alert(html);
       return false;
     }
     

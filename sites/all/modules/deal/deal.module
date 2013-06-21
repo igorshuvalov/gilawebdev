@@ -146,7 +146,7 @@ function deal_menu() {
   );
   
   $items['deal/front-page'] = array(
-    'title'             => 'Today\'s Best Deals',
+    'title'             => 'Giladiskon Today',
     'description'       => 'Deals for front page.',
     'page callback'     => 'deal_home_contents',
     'access arguments'  => array('public'),

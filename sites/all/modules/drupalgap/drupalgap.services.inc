@@ -155,6 +155,32 @@ function drupalgap_services_resources() {
           'access arguments' => array('access content'),
           'access arguments append' => TRUE,
         ),
+        'comments' => array(
+          'help' => t("Gets a list of comments of specified deal."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_comments',
+          'args' => array(
+            array(
+              'name' => 'id',
+              'type' => 'int',
+              'description' => 'The node id',
+              'source' => array('path' => '1'),
+              'optional' => FALSE,
+            ),
+          ),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
       ),
     ),
     'drupalgap_forum' => array(

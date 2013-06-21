@@ -79,6 +79,11 @@ function node_edit(node) {
       console.log('node_edit()');
       console.log(JSON.stringify(arguments));
     }
+    
+    if (!node) {
+      node = node_load(arg(1));
+    }
+    
     // Setup form defaults.
     // TODO - Always having to declare the default submit and validate
     //          function names is lame. Set it up to be automatic, then update

@@ -137,6 +137,12 @@ function drupalgap_default_services_endpoint() {
         'location' => array(
           'enabled' => '1',
         ),
+        'comments' => array(
+          'enabled' => '1',
+        ),
+        'comment_create' => array(
+          'enabled' => '1',
+        ),
       ),
     ),
     'drupalgap_forum' => array(
@@ -340,9 +346,6 @@ function drupalgap_default_services_endpoint() {
           'enabled' => '1',
         ),
       ),
-    ),
-    'deal' => array(
-      ''
     ),
   );
   $endpoint->debug = 0;

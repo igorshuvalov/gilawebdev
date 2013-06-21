@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Giladiskon</title>
+    <!--<script type="text/javascript" charset="utf-8" src="cordova.js"></script>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" /> 
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.mobile-1.3.1.min.js"></script>
+    <script src="js/drupalgap.js"></script>
+  </head>
+  <body>
+    <div data-role="page" id="index_page">
+
+      <div data-role="header" data-position="fixed">
+        <h1>Giladiskon</h1>
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#" class="ui-btn-active ui-state-persist">Deals</a></li>
+            <li><a href="#">Submit Deal</a></li>
+            <li><a href="#">Forum</a></li>
+          </ul>
+        </div><!-- /navbar -->
+      </div><!-- /header -->
+
+      <div data-role="content">
+        <ul data-role="listview">
+          <li><a href="#deal_list_page" data-transition="slide" class="today-best">Today's Best Deals</a></li>
+          <li><a href="#deal_list_page" data-transition="slide" class="new">New Deals</a></li>
+          <li><a href="#deal_list_page" data-transition="slide" class="popular">Popular Deals</a></li>
+          <li><a href="#categories_page" data-transition="slide" class="locations">Deals by Location</a></li>
+          <li><a href="#categories_page" data-transition="slide" class="categories">Deals by Category</a></li>
+        </ul>
+      </div><!-- /content -->
+      
+      <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#login" data-transition="slide" class="login-btn">Login</a></li>
+            <li><a href="#register" data-transition="slide" class="register-btn">Register</a></li>
+          </ul>
+        </div><!-- /navbar -->
+      </div><!-- /footer -->
+
+    </div><!-- /page -->
+    
+    <div data-role="page" id="deal_list_page">
+
+      <div data-role="header" data-position="fixed">
+        <a href="#index_page" data-role="button" data-transition="slide" data-rel="back">Back</a>
+        <h1 class="title">Deals List</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+        <ul data-role="listview" class="deal-list">
+        </ul>
+      </div><!-- /content -->
+      
+    </div><!-- /page -->
+    
+    <div data-role="page" id="categories_page">
+
+      <div data-role="header" data-position="fixed">
+        <a href="#index_page" data-role="button" data-transition="slide" data-rel="back">Back</a>
+        <h1 class="title">Categories</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+        <ul data-role="listview" class="category-list">
+        </ul>
+      </div><!-- /content -->
+      
+    </div><!-- /page -->
+    
+    <div data-role="page" id="deal_info_page">
+
+      <div data-role="header" data-position="fixed">
+        <a href="#index_page" data-role="button" data-transition="slide" data-rel="back">Back</a>
+        <h1 class="title">Title</h1>
+      </div><!-- /header -->
+
+      <div data-role="content" class="content">
+        <div class="deal-info">
+        </div>
+        <div class="comment-content">
+          <h2>Comments</h2>
+          <ul data-role="listview" class="comments-content">
+          </ul>
+          <h2>Add new comment</h2>
+          <div class="comment-create-content">
+          </div>
+        </div>
+      </div><!-- /content -->
+      
+    </div><!-- /page -->
+    
+    <div data-role="page" id="login">
+
+      <div data-role="header" data-position="fixed">
+        <a href="#index_page" data-role="button" data-transition="slide" data-rel="back">Back</a>
+        <h1 class="title">Login</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+      </div><!-- /content -->
+      
+    </div><!-- /page -->
+    
+    <div data-role="page" id="register">
+
+      <div data-role="header" data-position="fixed">
+        <a href="#index_page" data-role="button" data-transition="slide" data-rel="back">Back</a>
+        <h1 class="title">Register</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+      </div><!-- /content -->
+      
+    </div><!-- /page -->
+    
+    <div data-role="page" id="my_account">
+
+      <div data-role="header" data-position="fixed">
+        <a href="#index_page" data-role="button" data-transition="slide" data-rel="back">Back</a>
+        <h1 class="title">My Account</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+      </div><!-- /content -->
+      
+    </div><!-- /page -->
+    
+    <div data-role="page" id="logout">
+
+      <div data-role="header" data-position="fixed">
+        <a href="#index_page" data-role="button" data-transition="slide" data-rel="back">Back</a>
+        <h1 class="title">Logout</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+      </div><!-- /content -->
+      
+    </div><!-- /page -->
+  </body>
+</html>
