@@ -261,10 +261,17 @@ function _forum_node_check_node_type($node) {
  * Implements hook_node_view().
  */
 function forum_node_view($node, $view_mode) {
-  $node->body['und'][0]['value'] = nl2br($node->body['und'][0]['value']);
-  $node->body['und'][0]['safe_value'] = nl2br($node->body['und'][0]['safe_value']);
-  $node->content['body'][0]['#markup'] = nl2br($node->content['body'][0]['#markup']);
-  $node->content['body']['#items'][0]['value'] = nl2br($node->content['body']['#items'][0]['value']);
+  try {
+    if (@$node->body) {
+      $node->body['und'][0]['value'] = nl2br($node->body['und'][0]['value']);
+      $node->body['und'][0]['safe_value'] = nl2br($node->body['und'][0]['safe_value']);
+    }
+    if (@$node->content['body']) {
+      $node->content['body'][0]['#markup'] = nl2br($node->content['body'][0]['#markup']);
+      $node->content['body']['#items'][0]['value'] = nl2br($node->content['body']['#items'][0]['value']);
+      $node->content['body']['#items'][0]['safe_value'] = nl2br($node->content['body']['#items'][0]['safe_value']);
+    }    
+  } catch(Exception $e) {}  
   $vid = variable_get('forum_nav_vocabulary', 0);
   $vocabulary = taxonomy_vocabulary_load($vid);
   if (_forum_node_check_node_type($node)) {
