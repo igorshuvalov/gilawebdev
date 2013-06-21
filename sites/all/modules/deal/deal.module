@@ -821,7 +821,7 @@ function deal_info_presave($form, &$form_state, $deal = NULL) {
       $deal_count = $query
         ->execute()
         ->fetchField();
-      if ($deal_count != 0) { // User posted already one more deals within last 24hr
+      if ($deal_count >= 5) { // User posted already one more deals within last 24hr
         $form_state['values']['disabled'] = 1;
       }
       else { // User didn't post one or more deals within last 24hr

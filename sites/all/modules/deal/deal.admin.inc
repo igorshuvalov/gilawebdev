@@ -28,12 +28,15 @@ function deal_list_form() {
   $query
     ->fields('d')
     ->fields('u')
-    ->limit(10)
+    ->limit(20)
     ->orderByHeader($header)
     ->setCountQuery($count_query);
   $deals = $query->execute();
   
   $options = array();
+  
+  $destination = drupal_get_destination();
+  
   foreach ($deals as $deal) {
     $rate = deal_load_rate($deal->did, 'deal');
     $height = ($rate['plus'] + $rate['minus'] + $rate['plus_cancelled'] + $rate['minus_cancelled']) * 23 + 20;
@@ -49,7 +52,16 @@ function deal_list_form() {
       'date_start'  => $deal->date_start ? date('m/d/Y', $deal->date_start) : 'N/A',
       'date_expiry' => $deal->date_expiry ? date('m/d/Y', $deal->date_expiry) : 'N/A',
       'status'      => $deal->disabled ? 'Disabled' : 'Activated',
-      'operations'  => array('data' => array('#type' => 'link', '#title' => t('edit'), '#href' => "node/$deal->dnid/edit")),
+      'operations'  => array(
+        'data' => array(
+          '#theme' => 'links__node_operations',
+          '#links' => array(
+            'edit' => array('title' => t('edit'), 'href' => "node/$deal->dnid/edit"),
+            'delete' => array('title' => t('delete'), 'href' => 'node/' . $deal->dnid . '/delete', 'query' => $destination)
+          ),
+          '#attributes' => array('class' => array('links', 'inline')),
+        ),
+      ),
     );
   }
 
@@ -107,6 +119,6 @@ function deal_votes_view_popup($id, $object_type) {
     </style>
   ';
   
-  die($output);
+  return $output;
   
 }
