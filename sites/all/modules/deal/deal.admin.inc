@@ -42,12 +42,15 @@ function deal_list_form() {
     $height = ($rate['plus'] + $rate['minus'] + $rate['plus_cancelled'] + $rate['minus_cancelled']) * 23 + 20;
     $height = ($height < 30 ? 43 : $height);
     @$photo = file_load($deal->photo);
+    if (substr($deal->deal_url, 0, 7) != 'http://' && substr($deal->deal_url, 0, 8) != 'https://') {
+      $deal->deal_url = 'http://' . $deal->deal_url;
+    }
     $options[$deal->did] = array(
-      'title'       => array('data' => array('#type' => 'link', '#title' => $deal->title, '#href' => "deal/$deal->did")),
+      'title'       => array('data' => array('#type' => 'link', '#title' => $deal->title, '#href' => "node/$deal->dnid")),
       'rate'        => l('+' . $rate['plus'] . ' -' . $rate['minus'], 'admin/deal/' . $deal->did . '/votes/deal', array('attributes' => array('rel' => 'lightframe[group|width: 520px; height: ' . $height . 'px;]'))),
       'user'        => array('data' => array('#type' => 'link', '#title' => $deal->name, '#href' => "user/$deal->duid")),
       'photo'       => $photo ? theme('image', array('path' => $photo->uri, 'alt' => $deal->title, 'title' => $deal->title, 'width' => '50')) : '',
-      'deal_url'    => array('data' => array('#type' => 'link', '#title' => $deal->deal_url, '#href' => 'http://' . $deal->deal_url, '#attributes' => array('target' => '_blank'))),
+      'deal_url'    => array('data' => array('#type' => 'link', '#title' => $deal->deal_url, '#href' => $deal->deal_url, '#attributes' => array('target' => '_blank'))),
       'date_posted' => date('m/d/Y', $deal->date_posted),
       'date_start'  => $deal->date_start ? date('m/d/Y', $deal->date_start) : 'N/A',
       'date_expiry' => $deal->date_expiry ? date('m/d/Y', $deal->date_expiry) : 'N/A',
