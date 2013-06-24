@@ -539,7 +539,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
     '#type'           => 'textfield',
     '#title'          => t('Deal Title'),
     '#maxlength'      => 100,
-    '#description'    => t('Please enter a Deal Title (100 characters or less).'),
+    '#description'    => t('Please enter a Deal Title (100 characters or less. Include brand/business name).'),
     '#required'       => TRUE,
     '#default_value'  => $deal ? $deal->title : '',
   );
@@ -589,7 +589,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
   $form['description'] = array(
     '#type'           => 'textarea',
     '#title'          => t('Deal Description'),
-    '#description'    => t('Please enter a short Deal Description.'),
+    '#description'    => t('Please enter a short Deal Description. Include how the Deal can be redeemed and whether any restrictions apply.'),
     '#required'       => TRUE,
     '#default_value'  => $deal ? $deal->description : '',
   );
@@ -597,7 +597,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
   $form['representative'] = array(
     '#type'           => 'checkbox', 
     '#title'          => t('Store Representative'),
-    '#description'    => t('If you are a Store Representative, as defined in the Posting Guidelines, you must check this box.'),
+    '#description'    => t('If you are a Store Representative, as defined in the Posting Guidelines, you MUST check this box for your Deal to be posted.'),
     '#required'       => FALSE,
     '#default_value'  => $deal ? $deal->representative : 0,
   );
@@ -655,7 +655,7 @@ function deal_info_form($form, &$form_state, $deal = NULL) {
     $form['disabled'] = array(
       '#type'           => 'checkbox', 
       '#title'          => t('Status'),
-      '#description'    => t('Check if this deal is disabled.'),
+      '#description'    => t('Checked if Deal is disabled.'),
       '#default_value'  => $deal->disabled,
     );
   }
@@ -737,7 +737,7 @@ function deal_info_validate($form, &$form_state) {
   }
   
   if ($form_state['values']['coupon_code'] && !preg_match('/[a-zA-Z]/', $form_state['values']['coupon_code'])) {
-    form_set_error('coupon_code', t("Coupon code is invalid. Please put one or more alphanumeric character."));
+    form_set_error('coupon_code', t("Coupon code is invalid. Please put one or more alphanumeric characters."));
   }
   
   if (@strtotime($form_state['values']['date_expiry']) < @strtotime($form_state['values']['date_start'])) {
@@ -821,7 +821,7 @@ function deal_info_presave($form, &$form_state, $deal = NULL) {
       $deal_count = $query
         ->execute()
         ->fetchField();
-      if ($deal_count >= 5) { // User posted already one more deals within last 24hr
+      if ($deal_count >= 5) { // User posted already five deals within last 24hr
         $form_state['values']['disabled'] = 1;
       }
       else { // User didn't post one or more deals within last 24hr
@@ -887,7 +887,7 @@ function deal_edit_submit($form, &$form_state) {
     ->condition('did', $form_state['values']['did'])
     ->execute();
   
-  drupal_set_message(t('Deal information have been updated.'));
+  drupal_set_message(t('Deal has been updated.'));
     
 }
 
