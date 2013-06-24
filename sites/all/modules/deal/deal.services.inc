@@ -208,11 +208,69 @@ function _comments($id) {
   $node = node_load($id);
   
   $comments = NULL;
-  if ($cids = comment_get_thread($node, COMMENT_MODE_FLAT, 50)) {
+  if ($cids = comment_get_thread($node, COMMENT_MODE_THREADED, 50)) {
     $comments = comment_load_multiple($cids);
+    $comments_threaded = array();
+    foreach ($cids as $id => $cid) {
+      $comments_threaded[$id] = $comments[$cid];
+    }
   }
   
-  return array('comments' => $comments);
+  if ($comments_threaded) {
+    foreach ($comments_threaded as &$comment) {
+      if ($comment->pid) {
+        $parent  = comment_load($comment->pid);
+        $parent_body = $parent->comment_body['und'][0]['value'];
+        $comment->submitted = t('Comment by !username in reply to "!parent_body !parent_user" on !datetime', array('!username' => $comment->name, '!parent_body' => $parent_body, '!parent_user' => $parent->name, '!datetime' => date('Y-m-d H:ia', $comment->created)));
+      }
+      else {
+        $comment->submitted = t('Comment by !username on !datetime', array('!username' => $comment->name, '!datetime' => date('Y-m-d H:ia', $comment->created)));
+      }
+    }
+  }
+  
+  return array('comments' => $comments_threaded);
+  
+}
+
+/**
+* Submit comment
+* 
+*/
+function _comment_submit() {
+  
+  global $user;
+  
+  if (!$user->uid) {
+    return array('result' => 'NO AUTHENTICATED');
+  }
+  else {
+    $comment = (object) array(
+      'nid' => $_POST['nid'],
+      'cid' => 0,
+      'pid' => $_POST['pid'],
+      'uid' => $user->uid,
+      'mail' => '',
+      'is_anonymous' => 0,
+      'homepage' => '',
+      'status' => COMMENT_PUBLISHED,
+      'subject' => $_POST['comment'],
+      'language' => LANGUAGE_NONE,
+      'comment_body' => array(
+        LANGUAGE_NONE => array(
+          0 => array (
+            'value' => $_POST['comment'],
+            'format' => 'filtered_html'
+          )
+        )
+      ),
+    );
+
+    comment_submit($comment);
+    comment_save($comment);
+    
+    return array('result' => 'SUCCESS');
+  }
   
 }
 

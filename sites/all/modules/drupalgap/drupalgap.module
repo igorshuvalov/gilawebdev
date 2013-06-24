@@ -140,7 +140,7 @@ function drupalgap_default_services_endpoint() {
         'comments' => array(
           'enabled' => '1',
         ),
-        'comment_create' => array(
+        'comment_submit' => array(
           'enabled' => '1',
         ),
       ),

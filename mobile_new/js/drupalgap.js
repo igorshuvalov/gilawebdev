@@ -165,6 +165,167 @@ var build_vote_cancel_event = function(object) {
   
 }
 
+var build_comment_submit_event = function(object) {
+  var result_function = function() {
+    $.mobile.showPageLoadingMsg();
+    $.ajax({
+      type: "post",
+      async: false,
+      dataType: "json",
+      data: {
+        nid: object.nid,
+        pid: object.pid,
+        comment: $(object.comment_input).val(),
+      },
+      url: localStorage.service_path + "/drupalgap_deal/comment_submit",
+      beforeSend: function(request) {
+        request.setRequestHeader("X-CSRF-Token", localStorage.token);
+      },
+      success: function(rsp) {
+        switch(rsp.result) {
+          case "NO AUTHENTICATED":
+            alert("You have to sign in to comment.")
+            break;
+          case "SUCCESS":
+            build_comment_section(object.nid)();
+            break;
+          default:
+            break;
+        }
+      },
+      error: function(err) {
+        $.mobile.hidePageLoadingMsg();
+        alert("Comment was not submitted.");
+      }
+    });
+  };
+  
+  return result_function;
+}
+
+var build_comment_section = function(node_id) {
+  var result_function = function() {
+    $.ajax({
+      type: "post",
+      async: false,
+      dataType: "json",
+      url: localStorage.service_path + "/drupalgap_deal/comments/" + node_id,
+      beforeSend: function(request) {
+        request.setRequestHeader("X-CSRF-Token", localStorage.token);
+      },
+      success: function(rsp) {
+        $.mobile.hidePageLoadingMsg();
+        var comments_content = $("<div>")
+          .attr("data-role", "collapsible-set")
+          .attr("data-collapsed-icon", "arrow-r")
+          .attr("data-expanded-icon", "arrow-d")
+          .addClass("ui-corner-all");
+        if (rsp.comments) {
+          $.each(rsp.comments, function(id, comment) {
+            var comment_item_comment = $("<h2>")
+              .html(comment.comment_body.und[0].value);
+            var comment_item_submitted = $("<p>")
+              .html(comment.submitted);
+              
+            var comment_item_reply_input = $("<input>")
+              .attr("type", "text")
+              .attr("name", "reply" + comment.cid)
+              .attr("id", "reply" + comment.cid)
+              .attr("value", "");
+            var comment_item_reply_submit = $("<button>")
+              .attr("data-theme", "c")
+              .html("Reply")
+              .click(build_comment_submit_event({
+                  nid: node_id,
+                  pid: comment.cid,
+                  comment_input: "#reply" + comment.cid
+              })
+            );
+            
+            var comment_item = $("<div>")
+              .attr("data-role", "collapsible")
+              .attr("data-theme", "c")
+              .attr("data-content-theme", "c")
+              .append(comment_item_comment)
+              .append(comment_item_submitted);
+            if (localStorage.user_id != 0) {
+              comment_item
+                .append(
+                  $("<label>")
+                  .attr("for", "reply" + comment.cid)
+                  .html("Comment")
+                )
+                .append(comment_item_reply_input)
+                .append(comment_item_reply_submit);
+            }
+            
+            comments_content.append(comment_item);
+            
+            try {
+              comment_item_reply_input.textinput();
+              comment_item_reply_submit.button();
+              comment_item.collapsible({refresh:true});
+            } catch(e) { }
+          });
+          comments_content.find(">:first-child").addClass("ui-first-child");
+          comments_content.find(">:last-child").addClass("ui-last-child");
+        }
+        $("#deal_info_page .comments-content")
+          .html("")
+          .append(comments_content);
+        
+        try {
+          comments_content.collapsibleset("refresh");
+        } catch (e) { }
+        
+        var comment_item_comment_input = $("<input>")
+          .attr("type", "text")
+          .attr("name", "comment_new")
+          .attr("id", "comment_new")
+          .attr("value", "");
+        var comment_item_comment_submit = $("<button>")
+          .attr("data-theme", "c")
+          .html("Submit")
+          .click(build_comment_submit_event({
+              nid: node_id,
+              pid: 0,
+              comment_input: "#comment_new"
+          })
+        );
+          
+        $("#deal_info_page .comment-create-content").html("");
+        if (localStorage.user_id == 0) {
+          $("#deal_info_page .comment-create-content")
+            .append(
+              $("<label>")
+              .html("You have to sign in to comment for this content")
+            );
+        }
+        else {
+          $("#deal_info_page .comment-create-content")
+            .append(
+              $("<label>")
+              .attr("for", "comment_new")
+              .html("Comment")
+            )
+            .append(comment_item_comment_input)
+            .append(comment_item_comment_submit);
+        }
+        
+        try {
+          comment_item_comment_input.textinput();
+          comment_item_comment_submit.button();
+        } catch(e) { }
+      },
+      error: function(err) {
+        $.mobile.hidePageLoadingMsg();
+      }
+    });
+  }
+  
+  return result_function;
+}
+
 var build_deal_page = function(object) {
   var result_function = function() {
     $("#deal_info_page h1.title").text(object.title);
@@ -245,24 +406,7 @@ var build_deal_page = function(object) {
     } catch(e) {}
     
     $.mobile.showPageLoadingMsg();
-    $.ajax({
-      type: "post",
-      async: false,
-      dataType: "json",
-      url: localStorage.service_path + "/drupalgap_deal/comments/" + object.dnid,
-      beforeSend: function(request) {
-        request.setRequestHeader("X-CSRF-Token", localStorage.token);
-      },
-      success: function(rsp) {
-        $.mobile.hidePageLoadingMsg();
-        $.each(rsp.comments, function(cid, comment) {
-          //$("#deal_info_page .content .comments-content").append
-        });
-      },
-      error: function(err) {
-        $.mobile.hidePageLoadingMsg();
-      }
-    })
+    build_comment_section(object.dnid)();
   };
   
   return result_function;
