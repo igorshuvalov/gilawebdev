@@ -184,16 +184,8 @@ function _location($id) {
 */
 function _forum() {
   
-  $query = db_select('{node}', 'n')
-    ->condition('n.status', 1)
-    ->condition('n.type', 'forum');
-  $query->leftJoin('{users}', 'u', 'n.uid=u.uid');
-  $query
-    ->fields('n')
-    ->fields('u')
-    ->orderBy('nid', 'ASC');
-    
-  $nodes = $query->execute()->fetchAll();
+  $nodes = node_load_multiple(array(), array('type' => 'forum', 'status' => 1));
+  parse_forum_info($nodes);
   
   return $nodes;
   
@@ -274,6 +266,101 @@ function _comment_submit() {
   
 }
 
+/**
+* Submit deal
+* 
+*/
+function _deal_submit() {
+  
+  global $user;
+  
+  if (!$user->uid) {
+    return array('result' => 'NO AUTHENTICATED');
+  }
+  else {
+    $errors = array();
+    
+    $deal_url = str_replace('http://', '', $_POST['deal_url']);
+    $deal_url = str_replace('https://', '', $deal_url);
+    $deal_url = str_replace('www.', '', $deal_url);
+    
+    $deal_domain = @parse_url('http://' . $deal_url, PHP_URL_HOST);
+    $alias = 'deals/' . $deal_domain . '/' . deal_url_encode($_POST['title']);
+    
+    $query = db_select('{url_alias}', 'ua')
+      ->condition('alias', $alias);
+    $query->addExpression('COUNT(pid)');
+    $has_alias = $query
+      ->execute()
+      ->fetchField();
+    if ($has_alias) {
+      $errors['Deal Page URL'] = t("Deal Page URL alias has been duplicated. Please check the Deal Title and Deal Page URL again.");
+    }
+    
+    if (!$_POST['photo_automatic']) {
+      // If required, validate the uploaded photo.
+      $validator_photo = array(
+        'file_validate_is_image'          => array(),
+        'file_validate_image_resolution'  => array(),
+        'file_validate_size'              => array(500 * 1024),
+        'file_validate_extensions'        => array('png gif jpg jpeg'),
+      );
+      
+      $photo_upload = file_save_upload('photo_upload', $validator_photo);
+      if ($photo_upload === FALSE) {
+        $errors['Upload Deal Photo'] = t("Failed to upload image. Please confirm file extension and size meets requirements and try again.");
+      }
+      elseif ($photo_upload !== NULL) {
+        $_POST['photo_upload'] = $photo_upload;
+      }
+      else {
+        $_POST['photo_upload'] = '';
+      }
+    }
+    else {
+      $_POST['photo_upload'] = '';
+    }
+    
+    if ($_POST['coupon_code'] && !preg_match('/[a-zA-Z]/', $_POST['coupon_code'])) {
+      $errors['Coupon Code'] = t("Coupon Code is invalid. Please put one or more alphanumeric characters.");
+    }
+    
+    if (@strtotime($_POST['date_expiry']) < @strtotime($_POST['date_start'])) {
+      $errors['Deal Expiry Date'] = t("Deal Expiry Date must be after the Deal Start Date.");
+    }
+    
+    if (preg_match('/[^a-zA-Z0-9,\s]/', $_POST['tags'])) {
+      $errors['Deal Tags'] = t("Tag/s entered are invalid. Please remove any special characters and re-submit.");
+    }
+    
+    if (count($errors)) {
+      return array(
+        'result' => 'FAILED VALIDATION',
+        'errors' => $errors,
+      );
+    }
+    else {
+      if ($_POST['representative'] == 'yes') {
+        $_POST['representative'] = 1;
+      }
+      else {
+        $_POST['representative'] = 0;
+      }
+      $form_state = array('values' => $_POST);
+      deal_create_submit(null, $form_state);
+      return array(
+        'result' => 'SUCCESS',
+      );
+    }
+  }
+  
+}
+
+/**
+* Prepare some the deal information
+* 
+* @param mixed $deals
+*/
 function _parse_deal_info(&$deals) {
   
   foreach ($deals as &$item) {
@@ -326,4 +413,16 @@ function _parse_deal_info(&$deals) {
   
 }
 
-
+/**
+* Prepare some the forum information
+* 
+* @param mixed $forum
+*/
+function parse_forum_info(&$forums) {
+  
+  foreach ($forums as &$item) {
+    $item->submitted = 'Submitted by ' . $item->name . ', ' . date('j M Y - g:i a', $item->created);
+    $item->description = nl2br($item->body['und'][0]['value']);    
+  }
+  
+}

@@ -737,7 +737,7 @@ function deal_info_validate($form, &$form_state) {
   }
   
   if ($form_state['values']['coupon_code'] && !preg_match('/[a-zA-Z]/', $form_state['values']['coupon_code'])) {
-    form_set_error('coupon_code', t("Coupon code is invalid. Please put one or more alphanumeric characters."));
+    form_set_error('coupon_code', t("Coupon Code is invalid. Please put one or more alphanumeric characters."));
   }
   
   if (@strtotime($form_state['values']['date_expiry']) < @strtotime($form_state['values']['date_start'])) {
@@ -888,7 +888,7 @@ function deal_edit_submit($form, &$form_state) {
     ->execute();
   
   drupal_set_message(t('Deal has been updated.'));
-    
+  
 }
 
 /**

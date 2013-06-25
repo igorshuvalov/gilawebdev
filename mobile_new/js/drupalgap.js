@@ -412,6 +412,21 @@ var build_deal_page = function(object) {
   return result_function;
 }
 
+var build_forum_page = function(object) {
+  var result_function = function() {
+    $("#deal_info_page h1.title").text(object.title);
+    $("#deal_info_page .content .deal-info").html(
+      "<p>" + object.submitted + "</p>"
+      + "<p>" + object.description + "</p>"
+    );
+    
+    $.mobile.showPageLoadingMsg();
+    build_comment_section(object.nid)();
+  };
+  
+  return result_function;
+}
+
 var build_deal_list_item = function(object) {
   return $("<li>")
     .append(
@@ -512,6 +527,208 @@ var build_deal_menu_event = function(class_name) {
   
 };
 
+var build_forum_list_item = function(object) {
+  return $("<li>")
+    .append(
+      $("<a>")
+      .attr("href", "#deal_info_page")
+      .attr("data-transition", "slide")
+      .html(object.title)
+      .click(build_forum_page(object))
+    );
+};
+
+var initialize_deal_submit_form = function() {
+  var monthNames = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ];
+  $("#title").val("");
+  $("#deal_url").val("");
+  $("#photo_automatic")
+    .attr("checked", false)
+    .next()
+    .removeClass("ui-checkbox-on")
+    .addClass("ui-checkbox-off")
+    .attr("data-icon", "checkbox-off")
+    .find(".ui-icon")
+    .removeClass("ui-icon-checkbox-on")
+    .addClass("ui-icon-checkbox-off");
+  $("#coupon_code").val("");
+  $("#description").val("");
+  $("#representative")
+    .val("no")
+    .next()
+    .find(".ui-slider-label-a")
+    .css({width: "0%"});
+  $("#representative")
+    .next()
+    .find(".ui-slider-label-b")
+    .css({width: "100%"});
+  $("#representative")
+    .next()
+    .find(".ui-slider-handle")
+    .attr("aria-valuenow", "no")
+    .attr("aria-valuetext", "No")
+    .attr("title", "No")
+    .css({left: "0%"});
+  var date = new Date();
+  $("#date_start_year")
+    .val(date.getFullYear())
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>" + date.getFullYear() + "</span>");
+  $("#date_start_month")
+    .val(date.getMonth() + 1)
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>" + monthNames[date.getMonth()] + "</span>");
+  $("#date_start_day")
+    .val(date.getDate())
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>" + date.getDate() + "</span>");
+  $("#date_expiry_year")
+    .val(date.getFullYear())
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>" + date.getFullYear() + "</span>");
+  $("#date_expiry_month")
+    .val(date.getMonth() + 1)
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>" + monthNames[date.getMonth()] + "</span>");
+  $("#date_expiry_day")
+    .val(date.getDate())
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>" + date.getDate() + "</span>");
+  $("#category")
+    .val(1)
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>Accessories</span>");
+  $("#location")
+    .val(1)
+    .prev()
+    .find(".ui-btn-text")
+    .html("<span>Online Only</span>");
+  $("#tags").val("");
+}
+
+var build_deal_menu = function() {
+  var result_function = function() {
+    $(this).addClass("ui-state-persist");
+    $("#index_page a.forum_list").removeClass("ui-state-persist");
+    $("#index_page .main-list-view").html("");
+    $("#index_page .main-list-view")
+    .append(
+      $("<li>")
+      .append(
+        $("<a>")
+        .attr("href", "#deal_list_page")
+        .attr("data-transition", "slide")
+        .html("Today's Best Deals")
+        .click(build_deal_menu_event("today-best"))
+      )
+    )
+    .append(
+      $("<li>")
+      .append(
+        $("<a>")
+        .attr("href", "#deal_list_page")
+        .attr("data-transition", "slide")
+        .html("New Deals")
+        .click(build_deal_menu_event("new"))
+      )
+    )
+    .append(
+      $("<li>")
+      .append(
+        $("<a>")
+        .attr("href", "#deal_list_page")
+        .attr("data-transition", "slide")
+        .html("Popular Deals")
+        .click(build_deal_menu_event("popular"))
+      )
+    )
+    .append(
+      $("<li>")
+      .append(
+        $("<a>")
+        .attr("href", "#categories_page")
+        .attr("data-transition", "slide")
+        .html("Deals by Location")
+        .click(function() {
+          $.mobile.showPageLoadingMsg();
+          $("#categories_page h1.title").text("Locations");
+          $.ajax({
+            type: "post",
+            async: false,
+            dataType: "json",
+            url: localStorage.service_path + "/drupalgap_deal/location_items",
+            beforeSend: function(request) {
+              request.setRequestHeader("X-CSRF-Token", localStorage.token);
+            },
+            success: function(rsp) {
+              $.mobile.hidePageLoadingMsg();
+              $("#categories_page .category-list").html("");
+              $.each(rsp, function(index, object){
+                $("#categories_page .category-list").append(
+                  build_deal_location_list_item(object)
+                );
+              });
+              try{
+                $("#categories_page .category-list").listview("refresh", true);
+              } catch(e) { }
+            },
+            error: function(err) {}
+          });
+        })
+      )
+    )
+    .append(
+      $("<li>")
+      .append(
+        $("<a>")
+        .attr("href", "#categories_page")
+        .attr("data-transition", "slide")
+        .html("Deals by Category")
+        .click(function() {
+          $.mobile.showPageLoadingMsg();
+          $("#categories_page h1.title").text("Categories");
+          $.ajax({
+            type: "post",
+            async: false,
+            dataType: "json",
+            url: localStorage.service_path + "/drupalgap_deal/category_items",
+            beforeSend: function(request) {
+              request.setRequestHeader("X-CSRF-Token", localStorage.token);
+            },
+            success: function(rsp) {
+              $.mobile.hidePageLoadingMsg();
+              $("#categories_page .category-list").html("");
+              $.each(rsp, function(index, object){
+                $("#categories_page .category-list").append(
+                  build_deal_category_list_item(object)
+                );
+              });
+              try{
+                $("#categories_page .category-list").listview("refresh", true);
+              } catch(e) { }
+            },
+            error: function(err) {}
+          });
+        })
+      )
+    );
+    
+    try {
+      $("#index_page .main-list-view").listview("refresh", true);
+    } catch(e) {};
+  };
+  
+  return result_function;
+}
+
 $(document).ready(function() {
   $.mobile.showPageLoadingMsg();
   
@@ -543,65 +760,131 @@ $(document).ready(function() {
             $("#index_page a.register-btn").attr("href", "#register").find("span.ui-btn-text").html("Register");
           }
           
-          $("#index_page a.today-best").click(build_deal_menu_event("today-best"));
+          $("#index_page a.deals-menu").click(build_deal_menu());
           
-          $("#index_page a.new").click(build_deal_menu_event("new"));
-          
-          $("#index_page a.popular").click(build_deal_menu_event("popular"));
-          
-          $("#index_page a.locations").click(function() {
+          $("#index_page a.forum_list").click(function() {
+            $(this).addClass("ui-state-persist");
+            $("#index_page a.deals-menu").removeClass("ui-state-persist");
             $.mobile.showPageLoadingMsg();
-            $("#categories_page h1.title").text("Locations");
+            $("#deal_list_page h1.title").text("Forums");
             $.ajax({
               type: "post",
               async: false,
               dataType: "json",
-              url: localStorage.service_path + "/drupalgap_deal/location_items",
+              url: localStorage.service_path + "/drupalgap_forum/retrieve",
               beforeSend: function(request) {
                 request.setRequestHeader("X-CSRF-Token", localStorage.token);
               },
               success: function(rsp) {
                 $.mobile.hidePageLoadingMsg();
-                $("#categories_page .category-list").html("");
+                $("#index_page .main-list-view").html("");
                 $.each(rsp, function(index, object){
-                  $("#categories_page .category-list").append(
-                    build_deal_location_list_item(object)
+                  $("#index_page .main-list-view").append(
+                    build_forum_list_item(object)
                   );
                 });
-                try{
-                  $("#categories_page .category-list").listview("refresh", true);
-                } catch(e) { }
+                try {
+                  $("#index_page .main-list-view").listview("refresh", true);
+                } catch(e) {};
               },
-              error: function(err) {}
+              error: function(err) { }
             });
           });
           
-          $("#index_page a.categories").click(function() {
-            $.mobile.showPageLoadingMsg();
-            $("#categories_page h1.title").text("Categories");
-            $.ajax({
-              type: "post",
-              async: false,
-              dataType: "json",
-              url: localStorage.service_path + "/drupalgap_deal/category_items",
-              beforeSend: function(request) {
-                request.setRequestHeader("X-CSRF-Token", localStorage.token);
-              },
-              success: function(rsp) {
-                $.mobile.hidePageLoadingMsg();
-                $("#categories_page .category-list").html("");
-                $.each(rsp, function(index, object){
-                  $("#categories_page .category-list").append(
-                    build_deal_category_list_item(object)
-                  );
-                });
-                try{
-                  $("#categories_page .category-list").listview("refresh", true);
-                } catch(e) { }
-              },
-              error: function(err) {}
-            });
+          $("#index_page a.submit-deal").click(function() {
+            if (localStorage.user_id == 0) {
+              alert("You have to sign in to post new deal.");
+              return false;
+            }
           });
+          
+          $("#submit_deal_action").click(function() {
+            if (localStorage.user_id == 0) {
+              $("#submit_deal .message").html("You have to sign in to post new deal.").show().focus();
+            }
+            else {
+              var error = false;
+              if ($("#title").val() == "") {
+                $("#title").focus();
+                return false;
+              }
+              
+              if ($("#deal_url").val() == "") {
+                $("#title").focus();
+                return false;
+              }
+              
+              if ($("#description").val() == "") {
+                $("#title").focus();
+                return false;
+              }
+              
+              if ($("#category").val() == "") {
+                $("#title").focus();
+                return false;
+              }
+              
+              if ($("#location").val() == "") {
+                $("#title").focus();
+                return false;
+              }
+              
+              if ($("#tags").val() == "") {
+                $("#title").focus();
+                return false;
+              }
+              
+              $.mobile.showPageLoadingMsg();
+              $.ajax({
+                type: "post",
+                async: false,
+                dataType: "json",
+                data: {
+                  title: $("#title").val(),
+                  deal_url: $("#deal_url").val(),
+                  photo_automatic: $("#photo_automatic").val(),
+                  coupon_code: $("#coupon_code").val(),
+                  description: $("#description").val(),
+                  representative: $("#representative").val(),
+                  date_start: $('#date_start_year').val() + '-' + $('#date_start_month').val() + '-' + $('#date_start_day').val(),
+                  date_expiry: $('#date_expiry_year').val() + '-' + $('#date_expiry_month').val() + '-' + $('#date_expiry_day').val(),
+                  category: $('#category').val(),
+                  location: $('#location').val(),
+                  tags: $('#tags').val(),
+                },
+                url: localStorage.service_path + "/drupalgap_deal/deal_submit",
+                beforeSend: function(request) {
+                  request.setRequestHeader("X-CSRF-Token", localStorage.token);
+                },
+                success: function(rsp) {
+                  $.mobile.hidePageLoadingMsg();
+                  switch(rsp.result) {
+                    case "NO AUTHENTICATED":
+                      $("#submit_deal .message").html("You have to sign in to post new deal.").show();
+                      $("html, body").animate({ scrollTop: 50 }, "slow");
+                      break;
+                    case "FAILED VALIDATION":
+                      var error_msg = "";
+                      $.each(rsp.errors, function(key, message) {
+                        error_msg += "<p>" + key + " : " + message + "</p>";
+                      });
+                      $("#submit_deal .message").html(error_msg).show();
+                      $("html, body").animate({ scrollTop: 50 }, "slow");
+                      break;
+                    case "SUCCESS":
+                      $("#submit_deal .message").html("New deal has been created.").show();
+                      $("html, body").animate({ scrollTop: 50 }, "slow");
+                      initialize_deal_submit_form();
+                      break;
+                  }
+                },
+                error: function(err) {}
+              });
+            }
+          });
+          
+          build_deal_menu()();
+          initialize_deal_submit_form();
         },
         error: function(err) {
           $.mobile.hidePageLoadingMsg();

@@ -143,6 +143,9 @@ function drupalgap_default_services_endpoint() {
         'comment_submit' => array(
           'enabled' => '1',
         ),
+        'deal_submit' => array(
+          'enabled' => '1',
+        ),
       ),
     ),
     'drupalgap_forum' => array(

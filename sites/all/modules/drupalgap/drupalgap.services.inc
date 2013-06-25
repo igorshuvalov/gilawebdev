@@ -199,6 +199,24 @@ function drupalgap_services_resources() {
           'access arguments' => array('access content'),
           'access arguments append' => TRUE,
         ),
+        'deal_submit' => array(
+          'help' => t("Deal submit."),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'deal',
+            'name' => 'deal.services',
+          ),
+          'callback' => '_deal_submit',
+          'args' => array(),
+          'access callback' => '_drupalgap_resource_access',
+          'access callback file' => array(
+            'type' => 'inc',
+            'module' => 'drupalgap',
+            'name' => 'drupalgap.resource',
+          ),
+          'access arguments' => array('access content'),
+          'access arguments append' => TRUE,
+        ),
       ),
     ),
     'drupalgap_forum' => array(

@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" /> 
+    <link rel="stylesheet" href="css/styles.css" /> 
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/jquery.mobile-1.3.1.min.js"></script>
     <script src="js/drupalgap.js"></script>
@@ -18,20 +19,15 @@
         <h1>Giladiskon</h1>
         <div data-role="navbar">
           <ul>
-            <li><a href="#" class="ui-btn-active ui-state-persist">Deals</a></li>
-            <li><a href="#">Submit Deal</a></li>
-            <li><a href="#">Forum</a></li>
+            <li><a href="#" class="deals-menu ui-btn-active ui-state-persist">Deals</a></li>
+            <li><a href="#submit_deal" data-rel="dialog" class="submit-deal">Submit Deal</a></li>
+            <li><a href="#" class="forum_list">Forum</a></li>
           </ul>
         </div><!-- /navbar -->
       </div><!-- /header -->
 
       <div data-role="content">
-        <ul data-role="listview">
-          <li><a href="#deal_list_page" data-transition="slide" class="today-best">Today's Best Deals</a></li>
-          <li><a href="#deal_list_page" data-transition="slide" class="new">New Deals</a></li>
-          <li><a href="#deal_list_page" data-transition="slide" class="popular">Popular Deals</a></li>
-          <li><a href="#categories_page" data-transition="slide" class="locations">Deals by Location</a></li>
-          <li><a href="#categories_page" data-transition="slide" class="categories">Deals by Category</a></li>
+        <ul data-role="listview" class="main-list-view">
         </ul>
       </div><!-- /content -->
       
@@ -43,6 +39,249 @@
           </ul>
         </div><!-- /navbar -->
       </div><!-- /footer -->
+
+    </div><!-- /page -->
+    
+    <div data-role="page" id="submit_deal">
+
+      <div data-role="header">
+        <h1>Submit Deal</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+        <div class="message"></div>
+        <div data-role="fieldcontain">
+          <label for="title">Deal Title *</label>
+          <input type="text" name="title" id="title" value=""  />
+          <small>Please enter a Deal Title (100 characters or less. Include brand/business name).</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="deal_url">Deal URL *</label>
+          <input type="text" name="deal_url" id="deal_url" value=""  />
+          <small>Please enter the Website (URL) to access the Deal.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <fieldset data-role="controlgroup">
+            <legend>Deal Photo</legend>
+            <input type="checkbox" name="photo_automatic" id="photo_automatic" class="custom" />
+            <label for="photo_automatic">Option 1 - Make Automated Screenshot of Deal URL (Default)</label>
+            <small>Upload an image (JPEG, PNG or GIF) under 500Kb.</small>
+          </fieldset>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="coupon_code">Coupon Code</label>
+          <input type="text" name="coupon_code" id="coupon_code" value=""  />
+          <small>If Coupon Code applies to the Deal, please enter the Coupon Code.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="description">Deal Description *</label>
+          <textarea cols="40" rows="8" name="description" id="description"></textarea>
+          <small>Please enter a short Deal Description. Include how the Deal can be redeemed and whether any restrictions apply.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="representative">Store Representative</label>
+          <select name="representative" id="representative" data-role="slider">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+          <small>If you are a Store Representative, as defined in the Posting Guidelines, you MUST check this box for your Deal to be posted.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label>Deal Start Date</label>
+          <fieldset data-role="controlgroup" data-type="horizontal">
+            <select name="date_start_month" id="date_start_month">
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+            <select name="date_start_day" id="date_start_day">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+              <option value="25">25</option>
+              <option value="26">26</option>
+              <option value="27">27</option>
+              <option value="28">28</option>
+              <option value="29">29</option>
+              <option value="30">30</option>
+              <option value="31">31</option>
+            </select>
+            <select name="date_start_year" id="date_start_year">
+              <option value="2013">2013</option>
+              <option value="2014">2014</option>
+              <option value="2015">2015</option>
+              <option value="2016">2016</option>
+              <option value="2017">2017</option>
+              <option value="2018">2018</option>
+              <option value="2019">2019</option>
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+            </select>
+          </fieldset>
+          <small>If the Deal starts on a specific date, please specify the Start Date. Format is YYYY-MM-DD.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label>Deal Expiry Date</label>
+          <fieldset data-role="controlgroup" data-type="horizontal">
+            <select name="date_expiry_month" id="date_expiry_month">
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+            <select name="date_expiry_day" id="date_expiry_day">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+              <option value="25">25</option>
+              <option value="26">26</option>
+              <option value="27">27</option>
+              <option value="28">28</option>
+              <option value="29">29</option>
+              <option value="30">30</option>
+              <option value="31">31</option>
+            </select>
+            <select name="date_expiry_year" id="date_expiry_year">
+              <option value="2013">2013</option>
+              <option value="2014">2014</option>
+              <option value="2015">2015</option>
+              <option value="2016">2016</option>
+              <option value="2017">2017</option>
+              <option value="2018">2018</option>
+              <option value="2019">2019</option>
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+            </select>
+          </fieldset>
+          <small>If the Deal ends on a specific date, please specify the End Date. If you have entered a Start Date, the End Date must be after the Start Date. Format is YYYY-MM-DD.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="category" class="select">Deal Category *</label>
+          <select name="category" id="category">
+            <option value="1">Accessories</option>
+            <option value="2">Automotive</option>
+            <option value="3">Baby</option>
+            <option value="4">Beauty</option>
+            <option value="5">Books</option>
+            <option value="6">Clothing</option>
+            <option value="7">Electronics</option>
+            <option value="8">Flowers</option>
+            <option value="9">Food</option>
+            <option value="10">Furniture</option>
+            <option value="11">Gifts</option>
+            <option value="12">Health</option>
+            <option value="13">Home & Garden</option>
+            <option value="14">Jewellery</option>
+            <option value="15">Musical Instruments</option>
+            <option value="16">Office Supplies</option>
+            <option value="17">Party Supplies</option>
+            <option value="18">Pets</option>
+            <option value="19">Photography</option>
+            <option value="20">Services</option>
+            <option value="21">Shoes</option>
+            <option value="22">Sporting Goods</option>
+            <option value="23">Toys</option>
+            <option value="24">Travel</option>
+          </select>
+          <small>Please select the best matching Deal Category.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="location" class="select">Deal Location *</label>
+          <select name="location" id="location">
+            <option value="1">Online Only</option>
+            <option value="21">Seluruh Indonesia</option>
+            <option value="2">Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi)</option>
+            <option value="3">Surabaya</option>
+            <option value="4">Bandung</option>
+            <option value="5">Medan</option>
+            <option value="6">Semarang</option>
+            <option value="7">Yogyakarta</option>
+            <option value="8">Palembang</option>
+            <option value="9">Bandar Lampung</option>
+            <option value="10">Banjarmasin</option>
+            <option value="11">Pontianak</option>
+            <option value="12">Balikpapan</option>
+            <option value="13">Makassar</option>
+            <option value="14">Ambon</option>
+            <option value="15">Manado</option>
+            <option value="16">Jambi</option>
+            <option value="17">Padang</option>
+            <option value="18">Papua</option>
+            <option value="19">Papua Barat</option>
+            <option value="20">Madura</option>
+            <option value="22">Batam</option>
+            <option value="23">Bali</option>
+          </select>
+          <small>Please select the best matching Deal Location.</small>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="tags">Deal Tags *</label>
+          <input type="text" name="tags" id="tags" value="" />
+          <small>Please enter tags to describe the Deal. Only alphanumeric characters and spaces (to separate multi-word tags) are permitted. Each tag must be separated by a comma.</small>
+        </div>
+        <button type="button" data-theme="d" name="submit_deal_action" id="submit_deal_action">Submit Deal</button>
+      </div><!-- /content -->
 
     </div><!-- /page -->
     
