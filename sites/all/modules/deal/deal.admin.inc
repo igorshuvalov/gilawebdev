@@ -12,7 +12,7 @@ function deal_list_form() {
     'user'        => array('data' => t('User'), 'field' => 'd.duid'),
     'photo'       => array('data' => t('Photo')),
     'deal_url'    => array('data' => t('Deal URL')),
-    'date_posted' => array('data' => t('Posted Date'), 'field' => 'd.date_posted'),
+    'date_posted' => array('data' => t('Posted Date'), 'field' => 'd.date_posted', 'sort' => 'desc'),
     'date_start'  => array('data' => t('Start Date'), 'field' => 'd.date_start'),
     'date_expiry' => array('data' => t('Expiry Date'), 'field' => 'd.date_expiry'),
     'status'      => array('data' => t('Status'), 'field' => 'd.disabled'),

@@ -969,7 +969,12 @@ function node_load($nid = NULL, $vid = NULL, $reset = FALSE) {
   $nids = (isset($nid) ? array($nid) : array());
   $conditions = (isset($vid) ? array('vid' => $vid) : array());
   $node = node_load_multiple($nids, $conditions, $reset);
-  return $node ? reset($node) : FALSE;
+  $node = $node ? reset($node) : FALSE;
+  if ($node->type == 'forum') {
+    $node->body['und'][0]['value'] = _link_to_anchor($node->body['und'][0]['value']);
+    $node->body['und'][0]['safe_value'] = _link_to_anchor($node->body['und'][0]['safe_value']);
+  }
+  return $node;
 }
 
 /**
