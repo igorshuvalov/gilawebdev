@@ -986,8 +986,8 @@ function comment_view($comment, $node, $view_mode = 'full', $langcode = NULL) {
  */ //$comment->comment_body[und][0]['value']
 function comment_build_content($comment, $node, $view_mode = 'full', $langcode = NULL) {
   //Replace the links to anchor
-  $comment->comment_body['und'][0]['value'] = _link_to_anchor($comment->comment_body['und'][0]['value']);
-  $comment->comment_body['und'][0]['safe_value'] = _link_to_anchor($comment->comment_body['und'][0]['safe_value']);
+  $comment->comment_body['und'][0]['value'] = nl2br(_link_to_anchor($comment->comment_body['und'][0]['value']));
+  $comment->comment_body['und'][0]['safe_value'] = nl2br(_link_to_anchor($comment->comment_body['und'][0]['safe_value']));
   
   if (!isset($langcode)) {
     $langcode = $GLOBALS['language_content']->language;
@@ -2766,9 +2766,9 @@ function _link_to_anchor($text) {
       $replacement = "<a href=".$match.">{$match}</a>";
       $text = str_replace($match,$replacement,$text);
     }
-    return nl2br($text);
+    return $text;
   } 
   else {
-    return nl2br($text);
+    return $text;
   }
 }

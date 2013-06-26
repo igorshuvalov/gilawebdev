@@ -729,6 +729,104 @@ var build_deal_menu = function() {
   return result_function;
 }
 
+var build_login_link_event = function() {
+  var result_function = function() {
+    if ($("#username").val() == "") {
+      $("#username").focus();
+      return false;
+    }
+    if ($("#password").val() == "") {
+      $("#password").focus();
+      return false;
+    }
+    $.mobile.showPageLoadingMsg();
+    $.ajax({
+      type: "post",
+      async: false,
+      dataType: "json",
+      data: {
+        username: $("#username").val(),
+        password: $("#password").val(),
+      },
+      url: localStorage.service_path + "/drupalgap_user/login",
+      beforeSend: function(request) {
+        request.setRequestHeader("X-CSRF-Token", localStorage.token);
+      },
+      success: function(rsp) {
+        $("#username").val("");
+        $("#password").val("");
+        localStorage.user_id = rsp._user_resource_login.user.uid;
+        localStorage.user_name = rsp._user_resource_login.user.name;
+        $('.ui-dialog').dialog('close');
+        $("#index_page a.login-btn")
+          .attr("href", "#my_account")
+          .find("span.ui-btn-text")
+          .html("My Account");
+        $("#index_page a.register-btn")
+          .attr("href", "#")
+          .find("span.ui-btn-text")
+          .html("Logout")
+          .click(build_logout_link_event());
+          
+        $.ajax({
+          type: "get",
+          async: false,
+          dataType: "text",
+          url: localStorage.site_path + "/services/session/token",
+          success: function(rsp) {
+            $.mobile.hidePageLoadingMsg();
+            localStorage.token = rsp;
+          },
+          error: function(err) { $.mobile.hidePageLoadingMsg(); }
+        });
+      },
+      error: function(err) {
+        $.mobile.hidePageLoadingMsg();
+        $("#login .message").html("Wrong username or password.");
+      }
+    });
+  };
+  
+  return result_function;
+}
+
+var build_register_link_event = function() {
+  
+}
+
+var build_logout_link_event = function() {
+  var result_function = function() {
+    $.mobile.showPageLoadingMsg();
+    $.ajax({
+      type: "post",
+      async: false,
+      dataType: "json",
+      url: localStorage.service_path + "/drupalgap_user/logout",
+      beforeSend: function(request) {
+        request.setRequestHeader("X-CSRF-Token", localStorage.token);
+      },
+      success: function(rsp) {
+        $.mobile.hidePageLoadingMsg();
+        localStorage.user_id = 0;
+        localStorage.user_name = "";
+        $("#index_page a.login-btn")
+          .attr("href", "#login")
+          .find("span.ui-btn-text")
+          .html("Login");
+        $("#index_page a.register-btn")
+          .attr("href", "#register")
+          .find("span.ui-btn-text")
+          .html("Register")
+          .unbind('click');
+      },
+      error: function(err) { }
+    });
+    return false;
+  };
+  
+  return result_function;
+}
+
 $(document).ready(function() {
   $.mobile.showPageLoadingMsg();
   
@@ -752,13 +850,31 @@ $(document).ready(function() {
           localStorage.user_id = rsp.system_connect.user.uid;
           localStorage.user_name = rsp.system_connect.user.name;
           if (localStorage.user_id != 0) {
-            $("#index_page a.login-btn").attr("href", "#my_account").find("span.ui-btn-text").html("My Account");
-            $("#index_page a.register-btn").attr("href", "#logout").find("span.ui-btn-text").html("Logout");
+            $("#index_page a.login-btn")
+              .attr("href", "#my_account")
+              .find("span.ui-btn-text")
+              .html("My Account");
+            $("#index_page a.register-btn")
+              .attr("href", "#")
+              .find("span.ui-btn-text")
+              .html("Logout")
+              .click(build_logout_link_event());
           }
           else {
-            $("#index_page a.login-btn").attr("href", "#login").find("span.ui-btn-text").html("Login");
-            $("#index_page a.register-btn").attr("href", "#register").find("span.ui-btn-text").html("Register");
+            $("#index_page a.login-btn")
+              .attr("href", "#login")
+              .find("span.ui-btn-text")
+              .html("Login");
+            $("#index_page a.register-btn")
+              .attr("href", "#register")
+              .find("span.ui-btn-text")
+              .html("Register")
+              .unbind('click');
           }
+          $("#login_action")
+            .click(build_login_link_event());
+          $("#register_action")
+            .click(build_register_link_event());
           
           $("#index_page a.deals-menu").click(build_deal_menu());
           

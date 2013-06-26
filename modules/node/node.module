@@ -970,10 +970,7 @@ function node_load($nid = NULL, $vid = NULL, $reset = FALSE) {
   $conditions = (isset($vid) ? array('vid' => $vid) : array());
   $node = node_load_multiple($nids, $conditions, $reset);
   $node = $node ? reset($node) : FALSE;
-  if ($node->type == 'forum') {
-    $node->body['und'][0]['value'] = _link_to_anchor($node->body['und'][0]['value']);
-    $node->body['und'][0]['safe_value'] = _link_to_anchor($node->body['und'][0]['safe_value']);
-  }
+  
   return $node;
 }
 
@@ -1341,6 +1338,12 @@ function node_revision_delete($revision_id) {
  *   An array as expected by drupal_render().
  */
 function node_view($node, $view_mode = 'full', $langcode = NULL) {
+  
+  if (@$node->type == 'forum') {
+    $node->body['und'][0]['value'] = _link_to_anchor($node->body['und'][0]['value']);
+    $node->body['und'][0]['safe_value'] = _link_to_anchor($node->body['und'][0]['safe_value']);
+  }
+  
   if (!isset($langcode)) {
     $langcode = $GLOBALS['language_content']->language;
   }
