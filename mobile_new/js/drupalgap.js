@@ -1,4 +1,4 @@
-localStorage.site_path = "http://local.gilawebdev.com";
+localStorage.site_path = "http://gilawebdev.devcloud.acquia-sites.com";
 localStorage.default_services_endpoint = "drupalgap";
 localStorage.service_path = localStorage.site_path + "/" + localStorage.default_services_endpoint;
 
@@ -763,10 +763,10 @@ var build_login_link_event = function() {
           .find("span.ui-btn-text")
           .html("My Account");
         $("#index_page a.register-btn")
-          .attr("href", "#")
+          .removeAttr("href")
+          .click(build_logout_link_event())
           .find("span.ui-btn-text")
-          .html("Logout")
-          .click(build_logout_link_event());
+          .html("Logout");
           
         $.ajax({
           type: "get",
@@ -815,9 +815,9 @@ var build_logout_link_event = function() {
           .html("Login");
         $("#index_page a.register-btn")
           .attr("href", "#register")
+          .unbind('click')
           .find("span.ui-btn-text")
-          .html("Register")
-          .unbind('click');
+          .html("Register");
       },
       error: function(err) { }
     });
@@ -855,10 +855,10 @@ $(document).ready(function() {
               .find("span.ui-btn-text")
               .html("My Account");
             $("#index_page a.register-btn")
-              .attr("href", "#")
+              .removeAttr("href")
+              .click(build_logout_link_event())
               .find("span.ui-btn-text")
-              .html("Logout")
-              .click(build_logout_link_event());
+              .html("Logout");
           }
           else {
             $("#index_page a.login-btn")
@@ -867,9 +867,9 @@ $(document).ready(function() {
               .html("Login");
             $("#index_page a.register-btn")
               .attr("href", "#register")
+              .unbind('click')
               .find("span.ui-btn-text")
-              .html("Register")
-              .unbind('click');
+              .html("Register");
           }
           $("#login_action")
             .click(build_login_link_event());
