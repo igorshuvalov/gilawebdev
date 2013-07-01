@@ -1044,9 +1044,10 @@ function deal_categories() {
     5 => 'Books',
     6 => 'Clothing',
     7 => 'Electronics',
+    25 => 'Entertainment',
     8 => 'Flowers',
-    9 => 'Food',
-    10 => 'Furniture',
+    9 => 'Food',    
+    10 => 'Furniture',    
     11 => 'Gifts',
     12 => 'Health',
     13 => 'Home & Garden',
@@ -1262,8 +1263,9 @@ function deal_home_contents() {
   return theme(
     'deal_list', 
     array(
-      'list'  => $deals, 
-      'pager' => '',
+      'list'    => $deals, 
+      'pager'   => '',
+      'message' => 'Selamat Datang di Giladiskon - Komunitas Pecinta Diskon nomor 1 di Indonesia.<BR>Silahkan Sign In dan langsung mulai MENCARI, BERBAGI, dan MENDISKUSIKAN tawaran terbaik, diskon, voucher/kupon dan kode promosi yang bisa didapatkan online atau di lokasi favorit kamu. Kalau kamu belum pernah daftar, langsung saja SIGN UP disini!!!',
     )
   );
   

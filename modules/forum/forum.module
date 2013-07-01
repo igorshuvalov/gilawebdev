@@ -263,15 +263,15 @@ function _forum_node_check_node_type($node) {
 function forum_node_view($node, $view_mode) {
   try {
     if (@$node->body) {
-      $node->body['und'][0]['value'] = nl2br($node->body['und'][0]['value']);
-      $node->body['und'][0]['safe_value'] = nl2br($node->body['und'][0]['safe_value']);
+      $node->body['und'][0]['value'] = '<p>' . preg_replace('#\R+#', '</p><p>', $node->body['und'][0]['value']) . '</p>';
+      $node->body['und'][0]['safe_value'] = '<p>' . preg_replace('#\R+#', '</p><p>', $node->body['und'][0]['safe_value']) . '</p>';
     }
     if (@$node->content['body']) {
-      $node->content['body'][0]['#markup'] = nl2br($node->content['body'][0]['#markup']);
-      $node->content['body']['#items'][0]['value'] = nl2br($node->content['body']['#items'][0]['value']);
-      $node->content['body']['#items'][0]['safe_value'] = nl2br($node->content['body']['#items'][0]['safe_value']);
-    }    
-  } catch(Exception $e) {}  
+      $node->content['body'][0]['#markup'] = '<p>' . preg_replace('#\R+#', '</p><p>', $node->content['body'][0]['#markup']) . '</p>';
+      $node->content['body']['#items'][0]['value'] = '<p>' . preg_replace('#\R+#', '</p><p>', $node->content['body']['#items'][0]['value']) . '</p>';
+      $node->content['body']['#items'][0]['safe_value'] = '<p>' . preg_replace('#\R+#', '</p><p>', $node->content['body']['#items'][0]['safe_value']) . '</p>';
+    }
+  } catch(Exception $e) {}
   $vid = variable_get('forum_nav_vocabulary', 0);
   $vocabulary = taxonomy_vocabulary_load($vid);
   if (_forum_node_check_node_type($node)) {

@@ -365,16 +365,87 @@
       <div data-role="content">
         <div class="message"></div>
         <div data-role="fieldcontain">
-          <label for="username">Username *</label>
-          <input type="text" name="username" id="username" value="" />
+          <label for="user">Username *</label>
+          <input type="text" name="user" id="user" value="" />
         </div>
         <div data-role="fieldcontain">
-          <label for="email">Email *</label>
-          <input type="text" name="email" id="email" value="" />
+          <label for="mail">Email *</label>
+          <input type="text" name="mail" id="mail" value="" />
         </div>
         <div data-role="fieldcontain">
-          <label for="password">Password *</label>
-          <input type="password" name="password" id="password" value="" />
+          <label for="pass">Password *</label>
+          <input type="password" name="pass" id="pass" value="" />
+        </div>
+        <div data-role="fieldcontain">
+          <label for="confirm_pass">Confirm Password *</label>
+          <input type="password" name="confirm_pass" id="confirm_pass" value="" />
+        </div>
+        <div data-role="fieldcontain">
+          <label for="gender">Gender *</label>
+          <select name="gender" id="gender">
+            <option value="_none">- Select a value -</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+          </select>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="city">City *</label>
+          <select name="city" id="city">
+            <option value="_none">- Select a value -</option>
+            <option value="Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi)">Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi)</option>
+            <option value="Surabaya">Surabaya</option>
+            <option value="Bandung">Bandung</option>
+            <option value="Medan">Medan</option>
+            <option value="Semarang">Semarang</option>
+            <option value="Yogyakarta">Yogyakarta</option>
+            <option value="Palembang">Palembang</option>
+            <option value="Bandar Lampung">Bandar Lampung</option>
+            <option value="Banjarmasin">Banjarmasin</option>
+            <option value="Pontianak">Pontianak</option>
+            <option value="Balikpapan">Balikpapan</option>
+            <option value="Makassar">Makassar</option>
+            <option value="Ambon">Ambon</option>
+            <option value="Manado">Manado</option>
+            <option value="Jambi">Jambi</option>
+            <option value="Padang">Padang</option>
+            <option value="Papua">Papua</option>
+            <option value="Papua Barat">Papua Barat</option>
+            <option value="Madura">Madura</option>
+            <option value="Seluruh Indonesia">Seluruh Indonesia</option>
+            <option value="Batam">Batam</option>
+            <option value="Bali">Bali</option>
+          </select>
+        </div>
+        <div data-role="fieldcontain">
+          <label for="favourite_category">Favourite Deal Category *</label>
+          <select name="favourite_category" id="favourite_category">
+            <option value="_none">- Select a value -</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Automotive">Automotive</option>
+            <option value="Baby">Baby</option>
+            <option value="Beauty">Beauty</option>
+            <option value="Books">Books</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Flowers">Flowers</option>
+            <option value="Food">Food</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Gifts">Gifts</option>
+            <option value="Health">Health</option>
+            <option value="Home &amp; Garden">Home &amp; Garden</option>
+            <option value="Jewellery">Jewellery</option>
+            <option value="Musical Instruments">Musical Instruments</option>
+            <option value="Office Supplies">Office Supplies</option>
+            <option value="Party Supplies">Party Supplies</option>
+            <option value="Pets">Pets</option>
+            <option value="Photography">Photography</option>
+            <option value="Services">Services</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Sporting Goods">Sporting Goods</option>
+            <option value="Toys">Toys</option>
+            <option value="Travel">Travel</option>
+          </select>
         </div>
         <button type="button" data-theme="d" name="register_action" id="register_action">Register</button>
       </div><!-- /content -->
@@ -387,7 +458,7 @@
         <h1 class="title">My Account</h1>
       </div><!-- /header -->
 
-      <div data-role="content">
+      <div data-role="content" class="content">
       </div><!-- /content -->
       
     </div><!-- /page -->

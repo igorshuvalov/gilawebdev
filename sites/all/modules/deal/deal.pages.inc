@@ -681,12 +681,12 @@ function deal_items_by_tag($deal_tag, $key = NULL) {
   
   switch($key) {
     case 'noexpired':
-      drupal_set_title(t('Deal Tag - ' . $deal_tag . ' - Active Deals'));
+      drupal_set_title(t($deal_tag . ' Deals' . ' - Active Deals'));
       $query->condition('d.date_expiry', strtotime('now'), '>');
       $filter_options = NULL;
       break;
     default:
-      drupal_set_title(t('Deal Tag - ' . $deal_tag));
+      drupal_set_title(t($deal_tag . ' Deals'));
       $filter_options = array(
         t('Hide Expired Deals') => 'deal/tag/' . $deal_tag . '/active',
       );

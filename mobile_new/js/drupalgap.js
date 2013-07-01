@@ -1,4 +1,4 @@
-localStorage.site_path = "http://gilawebdev.devcloud.acquia-sites.com";
+localStorage.site_path = "http://local.gilawebdev.com";
 localStorage.default_services_endpoint = "drupalgap";
 localStorage.service_path = localStorage.site_path + "/" + localStorage.default_services_endpoint;
 
@@ -791,7 +791,91 @@ var build_login_link_event = function() {
 }
 
 var build_register_link_event = function() {
+  var result_function = function() {
+    var reg_user = new RegExp(/^[a-z0-9_-]{1,60}$/);
+    var reg_mail = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
+    
+    if ($("#user").val() == "") {
+      $("#register .message").html("You must enter a username.");
+      $("#user").focus();
+      return false;
+    }
+    if ($("#user").val().substring(0, 1) == " ") {
+      $("#register .message").html("The username cannot begin with a space.");
+      $("#user").focus();
+      return false;
+    }
+    if ($("#user").val().substring($("#user").val().length - 1) == " ") {
+      $("#register .message").html("The username cannot end with a space.");
+      $("#user").focus();
+      return false;
+    }
+    if ($("#user").val().search("  ") !== -1) {
+      $("#register .message").html("The username cannot contain multiple spaces in a row.");
+      $("#user").focus();
+      return false;
+    }
+    if ($("#user").val().length > 60) {
+      $("#register .message").html("The username is too long: it must be 60 characters or less.");
+      $("#user").focus();
+      return false;
+    }
+    if ($("#user").val().match(reg_user) == null) {
+      $("#register .message").html("The username contains an illegal character.");
+      $("#user").focus();
+      return false;
+    }
+    
+    if ($("#mail").val().match(reg_mail) == null) {
+      $("#register .message").html("Email validation is failed.");
+      $("#mail").focus();
+      return false;
+    }
+    
+    if ($("#pass").val() == "") {
+      $("#register .message").html("You must enter the password.");
+      $("#pass").focus();
+      return false;
+    }
+    if ($("#pass").val() != $("#confirm_pass").val()) {
+      $("#register .message").html("The confirm password is not same with password. Please check the confirm password again.");
+      $("#confirm_pass").focus();
+      return false;
+    }
+    $.mobile.showPageLoadingMsg();
+    $.ajax({
+      type: "post",
+      async: false,
+      dataType: "json",
+      data: {
+        name: $("#user").val(),
+        mail: $("#mail").val(),
+        pass: $("#pass").val(),
+        gender: $("#gender").val(),
+        city: $("#city").val(),
+        category: $("#favourite_category").val(),
+      },
+      url: localStorage.service_path + "/drupalgap_user/register",
+      beforeSend: function(request) {
+        request.setRequestHeader("X-CSRF-Token", localStorage.token);
+      },
+      success: function(rsp) {
+        $.mobile.hidePageLoadingMsg();
+        $("#register .message")
+        .html("Your account has been created successfully. <BR>Your account will be activated soon. Please check your email box.")
+        .show();
+      },
+      error: function(err) {
+        $.mobile.hidePageLoadingMsg();
+        $("#register .message")
+        .html("Errors are occurring while creating new account. <BR>Please contact administrator for this problem.")
+        .show();
+      }
+    });
+    return false;
+  }
   
+  return result_function;
 }
 
 var build_logout_link_event = function() {
@@ -849,6 +933,7 @@ $(document).ready(function() {
           $.mobile.hidePageLoadingMsg();
           localStorage.user_id = rsp.system_connect.user.uid;
           localStorage.user_name = rsp.system_connect.user.name;
+          localStorage.user_mail = rsp.system_connect.user.mail;
           if (localStorage.user_id != 0) {
             $("#index_page a.login-btn")
               .attr("href", "#my_account")
@@ -859,6 +944,11 @@ $(document).ready(function() {
               .click(build_logout_link_event())
               .find("span.ui-btn-text")
               .html("Logout");
+            $("#my_account .content")
+              .html(
+                "Name: " + localStorage.user_name + "<BR>" +
+                "Email: " + localStorage.user_mail
+              );
           }
           else {
             $("#index_page a.login-btn")

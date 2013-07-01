@@ -554,6 +554,27 @@ function drupalgap_services_resources() {
               'source' => array('data' => 'pass'),
               'optional' => FALSE,
             ),
+            array(
+              'name' => 'gender',
+              'type' => 'string',
+              'description' => t("The desired Drupal user's gender."),
+              'source' => array('data' => 'gender'),
+              'optional' => FALSE,
+            ),
+            array(
+              'name' => 'city',
+              'type' => 'string',
+              'description' => t("The desired Drupal user's city."),
+              'source' => array('data' => 'city'),
+              'optional' => FALSE,
+            ),
+            array(
+              'name' => 'category',
+              'type' => 'string',
+              'description' => t("The desired Drupal user's favourite category."),
+              'source' => array('data' => 'category'),
+              'optional' => FALSE,
+            ),
           ),
         ),
         'roles_and_permissions' => array(

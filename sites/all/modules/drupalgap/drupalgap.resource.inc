@@ -179,7 +179,7 @@ function _drupalgap_resource_user_logout() {
  * @return array
  *   Array with the user registration result and drupalgap system connect result.
  */
-function _drupalgap_resource_user_register ($name, $mail, $pass) {
+function _drupalgap_resource_user_register ($name, $mail, $pass, $gender, $city, $category) {
   $results = array();
   
   // Make a call to the user login resource.
@@ -188,6 +188,15 @@ function _drupalgap_resource_user_register ($name, $mail, $pass) {
     'name' => $name,
     'mail' => $mail,
     'pass' => $pass,
+    'field_gender' => array(
+      LANGUAGE_NONE => $gender
+    ),
+    'field_city' => array(
+      LANGUAGE_NONE => $city
+    ),
+    'field_favourite_deal_category' => array(
+      LANGUAGE_NONE => $category
+    ),
   );
   $results['_user_resource_create'] = _user_resource_create($data);
   

@@ -5,6 +5,11 @@
     echo t('No deals matching your search were found. Please try again soon.');
   else:
 ?>
+<?php
+  if (@$message):
+    echo $message;
+  endif;
+?>
 <?php 
   if (@$filter_options):
 ?>
