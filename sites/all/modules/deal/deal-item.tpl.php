@@ -48,7 +48,7 @@
     </h2>
     <small>
       <?php 
-        echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . ', <a href="' . url('node/' . $node->nid) . '#comments">' . $node->comment_count . ' comment(s)</a>';
+        echo 'Submitted by ' . l($item->name, 'user/' . $item->uid) . ', ' . date('j M Y - g:i a', $item->date_posted) . '';
       ?>
     </small>
 	

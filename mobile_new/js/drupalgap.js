@@ -1,4 +1,4 @@
-localStorage.site_path = "http://local.gilawebdev.com";
+localStorage.site_path = "http://192.168.0.10/gilawebdev";
 localStorage.default_services_endpoint = "drupalgap";
 localStorage.service_path = localStorage.site_path + "/" + localStorage.default_services_endpoint;
 
