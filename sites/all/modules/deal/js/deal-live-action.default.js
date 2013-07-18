@@ -33,7 +33,7 @@ jQuery('document').ready(function() {
       },
       dataType: 'json',
       success: function(rsp) {
-        jQuery('#live_events tbody').html(rsp.html);
+        jQuery('#live_events .live-events-list').html(rsp.html);
         jQuery('#live_timestamp').val(rsp.timestamp);
         //jQuery('#live_events tbody tr.new').css({backgroundColor:'#ff0'}).animate({backgroundColor: '#fff'});
         liveUpdateInterval.play(true);
